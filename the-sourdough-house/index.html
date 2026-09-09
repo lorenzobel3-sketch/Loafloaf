@@ -46,7 +46,12 @@
   --ease:cubic-bezier(.22,.61,.36,1);
   --ease-soft:cubic-bezier(.4,0,.2,1);
 
-  --hero-vh:400;
+  /* 400vh is the skill's proven starting point for a single 6s shot, but the
+     flick test rejected it: with four bands the scroll range gave each beat
+     only 48 to 78vh, against the 80 to 130vh plateau the standard requires,
+     and band one was skippable at 360px steps. Deviation said out loud.
+     At 560vh the scroll range is 460vh, so every beat gets 94 to 110vh. */
+  --hero-vh:560;
 }
 
 *{box-sizing:border-box}
@@ -433,19 +438,19 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
     </svg>
 
     <div class="bands" id="bands">
-      <div class="band band-a" data-a="0" data-b="0.16">
+      <div class="band band-a" data-a="0" data-b="0.205">
         <div class="line" data-split="word">Four things go in.</div>
       </div>
-      <div class="band band-b" data-a="0.20" data-b="0.42" data-spread="0.34">
+      <div class="band band-b" data-a="0.24" data-b="0.465" data-spread="0.34">
         <div class="line" data-split="char">Flour. Water. Salt.</div>
       </div>
-      <div class="band band-c" data-a="0.46" data-b="0.68">
+      <div class="band band-c" data-a="0.50" data-b="0.725">
         <div class="line stack">
           <span class="soft" aria-hidden="true">And thirty-six hours.</span>
           <span class="sharp">And thirty-six hours.</span>
         </div>
       </div>
-      <div class="band band-d live" data-a="0.74" data-b="1" data-ramp="0.036">
+      <div class="band band-d live" data-a="0.76" data-b="1" data-ramp="0.036">
         <p class="kicker">Batch no. 41</p>
         <h1 data-split="word">THE SOURDOUGH HOUSE</h1>
         <svg class="score-rule" viewBox="0 0 300 22" aria-hidden="true" preserveAspectRatio="none">
@@ -1015,10 +1020,13 @@ var GATES = [
   '(orientation: landscape) and (pointer: coarse) and (max-height: 560px)',
   '(prefers-reduced-motion: reduce)'
 ];
-var scrubOn = false;
+/* null, not false, so the very first applyHeroMode() always commits a state.
+   Starting at false made disableScrub() return early on a phone, leaving the
+   CSS hiding the scrub hero while the JS still believed it was armed. */
+var scrubOn = null;
 
 function enableScrub(){
-  if (scrubOn) return;
+  if (scrubOn === true) return;
   scrubOn = true;
   document.documentElement.classList.remove('static-hero');
   initHeroOnce();
@@ -1030,7 +1038,7 @@ function enableScrub(){
 }
 
 function disableScrub(){
-  if (!scrubOn) return;
+  if (scrubOn === false) return;
   scrubOn = false;
   document.documentElement.classList.add('static-hero');
   window.removeEventListener('scroll', onScroll);
