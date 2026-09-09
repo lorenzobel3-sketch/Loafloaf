@@ -1,0 +1,299 @@
+HANDOVER: read this first
+This build started in the Claude mobile app and is moving to Claude Code. Everything below
+Phase 5 is decided and approved by the user. Do not re-ask these questions. Pick up at
+Phase 6.
+Why it moved
+The mobile sandbox has no network egress to the asset CDN, so generated files could not
+be downloaded. That blocked two things the skill needs: visual inspection of every asset,
+and the ffmpeg scrub re-encode in Phase 7. Neither is a problem on a local machine.
+State of play
+Phases 1 to 5: COMPLETE.
+ The design package follows this note.
+Brand: THE SOURDOUGH HOUSE. Invented, footer discloses fictional.
+Feeling: warm and homey. Reference photo supplied by the user: a boule on stoneware,
+crocheted cream cloth, weathered wood, soft blown-out window light from the left,
+steam rising. Mood words from the user, verbatim: "warm, home made, only 4
+ingredients, organic, Sunday morning vibe".
+Concept chosen (of three offered): 
+the morning descent.
+ Camera drifts down through
+a sunlit kitchen and flour-lit air, settles on the loaf on its stoneware plate, steam rising.
+Tier 1, single 6s journey. User was told phones get the designed still hero.
+Customer research: done, findings in the package. The pain is "sourfaux" (supermarket
+loaves labelled sourdough but raised on commercial yeast); the tell buyers teach each
+other is a long ingredient list; the objection is price. Single CTA: claim a loaf from this
+week's bake.
+Phase 6: STARTED, NOT PASSED.
+Step 1 done. Preflighted at 2 credits on both nano
+_
+banana
+_
+pro and
+cinematic
+_
+studio
+_
+2
+_
+5.
+Step 2 done, with a problem. Job c21f6b4c-d706-4eae-b845-07c36e3fd2d2 was
+submitted to 
+nano_banana_pro
+ but the server ran it on 
+nano_banana_2
+. Check the
+model on the returned job before trusting any frame.
+
+@@BREAK@@
+
+
+@@BREAK@@
+
+Step 3 NOT done. Nobody has inspected that frame, so it is unapproved. Treat it as if it
+does not exist. Regenerate on the intended model, inspect it properly (trademarks,
+anatomy, composition, negative space in the upper two thirds), then show the user.
+Steps 4 onward: untouched. The video model choice has not been presented.
+Money
+Balance read 1210 credits before and after the image job, on a Plus plan. Nothing has
+actually been spent. Re-check with a balance call before quoting any number to the user.
+Setup notes for Phase 1 on the new machine
+Run the scan properly, it is a different machine. Two shortcuts that are already true:
+The user HAS a Higgsfield account with credits. Skip the signup link entirely. They still
+need to add the connector inside Claude Code.
+ffmpeg and Node were present in the old sandbox, which tells you nothing about this
+one. Check both yourself.
+The prompt that produced the unapproved frame
+Kept for reference, not for reuse without review. The negative-space phrasing in it landed
+edge-to-edge correctly, which is the part worth keeping.
+A warm home kitchen seen from high above the table, composed as the first moment of a
+slow camera descent that will travel down through flour-lit air and come to rest on a
+single round sourdough loaf on the table far below. Soft blown-out morning window light
+entering from the left through a thin white curtain, diffused, no hard shadows anywhere.
+The palette is flour-dusted cream linen, pale oat crochet lace, weathered grey-brown
+wood, muted stoneware, and the deep caramelised gold of baked crust. Fine flour dust
+drifts and turns slowly through the beam of window light, filling the air of the entire room.
+The upper two thirds of the frame is one continuous stretch of light-filled air and softly
+receding plaster wall, plain and calm and evenly lit, and the lower third holds the worn
+wooden table where the loaf sits small, distant and slightly soft in the shallow focus.
+Cinematic, photorealistic, 16
+!
+9. No people, no hands. No text, no logos, no lettering
+anywhere.
+Design Package: THE SOURDOUGH HOUSE
+
+@@BREAK@@
+
+Tier 1, single journey. Trimmed package per design-package.md. Invented brand. Footer
+discloses fictional.
+1. The brand premise
+THE SOURDOUGH HOUSE sells one loaf made of four things: flour, water, salt, and time.
+Three of them cost pennies. The fourth is the entire business. Every section teaches that
+one idea, that what you pay for is the thirty-six hours nobody else will give the bread. The
+interactive moment makes the visitor perform the wait. The closing line collects on it. If a
+section does not serve the four-ingredient idea, it does not ship.
+Register: warm, plain, homely, quietly confident. A baker talking across a counter, not a
+brand talking at a market.
+2. Palette as CSS tokens
+Direction sampled from the reference photo's world (flour linen, crochet lace, weathered
+wood, blistered crust, blown-out window light). EXACT VALUES FINALIZED FROM
+APPROVED FOOTAGE AFTER THE VIDEO GATE.
+:root{
+  --canvas:#EDE6D8;        /* flour-dusted linen, never pure white */
+  --panel:#E3D9C6;         /* oat, the shadow inside the crochet */
+  --accent:#7B3B1B;        /* the deep caramelised ridge of the score */
+  --accent-hover:#94502A;
+  --accent-muted:rgba(123,59,27,.18);  /* borders, glows, particles */
+  --text-secondary:#6E6152;
+  --text-primary:#2A2018;  /* dark roast brown, never #000 */
+}
+Design-bar deviation, said out loud: warm cream canvas is on the banned AI-cliche list.
+Taking the carve-out because cream, linen and stoneware ARE this subject's own material
+world. Earning it three ways: tones sampled from the actual footage, NOT terracotta as the
+accent (burnt crust ridge instead), and no stock bakery template layout. No two adjacent
+sections share a skeleton.
+3. The type trio
+Display: 
+Fraunces
+ (opsz + SOFT + WONK axes). Warm, slightly irregular, reads
+handmade. Weights 400, 600, 700 only. Not Playfair, not a default.
+Body: 
+Karla
+, 400 and 500. Quiet humanist, faint warmth.
+
+@@BREAK@@
+
+Mono: 
+DM Mono
+, 400. Small labels only: batch numbers, hour readouts, the
+fermentation clock.
+Never Inter or Roboto anywhere.
+4. The band map (hero ~400vh, 6s shot)
+Band
+Range
+(starting
+point)
+Footage moment
+Copy (verbatim)
+Entrance
+1
+0.00 to 0.16
+high in the kitchen,
+light and drifting flour
+"Four things go
+in."
+drift-down (echoes
+the descent)
+2
+0.20 to
+0.42
+descending through
+the flour-lit air
+"Flour. Water.
+Salt."
+scatter (echoes
+dust settling)
+3
+0.46 to
+0.68
+table arriving, loaf
+resolving
+"And thirty-six
+hours."
+blur-to-sharp
+(echoes focus
+arriving)
+4
+0.74 to 1.00
+settled on the loaf,
+steam rising
+headline +
+subline + CTA
+(below)
+word-by-word rise,
+staged settle
+Band 4 copy, verbatim:
+Headline: "THE SOURDOUGH HOUSE"
+Subline: "One loaf. Baked Saturday night. Yours Sunday morning."
+CTA: "Claim this week's loaf"
+Bands 1 to 3 are a deliberate brand triplet (staccato, designed on purpose). They are craft,
+not drift. They survive the Phase 9 sweep.
+Text lives in the upper two-thirds throughout; the action lane (lower centre, where the loaf
+resolves) stays clear. Band 4 sits above the loaf with margin.
+5. Static-hero copy block (phones, reduced motion)
+Over the ending frame:
+Headline: "Flour. Water. Salt. And thirty-six hours."
+
+@@BREAK@@
+
+Subline: "One loaf. Baked Saturday night. Yours Sunday morning."
+CTA: "Claim this week's loaf"
+6. Below-fold outline (funnels to ONE anchor: #claim)
+"
+. 
+The label test.
+ The buyers' real pain, in their words. Supermarket loaves labelled
+sourdough raised on commercial yeast. Side-by-side of two ingredient lists: theirs long,
+ours four words. Layout: split, no kicker.
+#
+. 
+How the week goes.
+ Three steps, THREE images, equal treatment (an unimaged step
+reads as a hole). Feed, fold, bake. Layout: horizontal timeline on the score curve.
+Different skeleton from section 1.
+$
+. 
+The thirty-six hour hold.
+ THE interactive moment. Press and hold; the mono clock
+counts 0 to 36 and the crumb opens. Release early and it eases back down, never
+snaps. Completing it lights the section's three proof lines in sequence. Reduced motion
+gets the finished state with no hold.
+%
+. 
+What it costs, and why.
+ Honest price. The flour, the hours, the small batch. Answers
+the sticker-shock objection head on rather than hiding it.
+&
+. 
+Questions people actually ask.
+ FAQ from research: why it costs more than the
+supermarket, why only Sundays, how to tell real sourdough, whether it is gluten free
+(answer: no, and say so plainly, no health claims anywhere on this site).
+'
+. 
+What people say.
+ Testimonials. Clearly fictional, consistent with the footer disclosure.
+(
+. 
+Claim this week's loaf.
+ The form. #claim anchor.
+)
+. 
+Footer.
+ Fictional-brand disclosure. Site and imagery generated.
+Form microcopy:
+Labels: "Your name", "Email", "How many loaves"
+Button: "Claim this week's loaf"
+Success: "You're on the list for Sunday. We'll email you Friday night."
+Form handling on a static site: 
+JS-only success state.
+ No backend, so the submission goes
+nowhere. This is an invented brand, so that is the honest default. Tell the user plainly, and
+offer mailto or a form service if the brand ever becomes real.
+7. The vector layer plan
+
+@@BREAK@@
+
+SIGNATURE: the score.
+ One hand-drawn SVG curve, the lame's slash. It is the logo
+mark, every section divider, and the rule under the settle headline. Dividers draw
+themselves left to right on scroll like a blade opening a crust. The whole boldness
+budget lives here. Removing it would visibly change the page, which is the loudness
+test.
+Flour drift: whisper-level particles on the fixed background layer, 90s cycle, negative
+delay so it is mid-cycle at first paint.
+Fermentation arc: the mono clock ring in section 3.
+All of it honors reduced motion: final states shown, drives stopped.
+8. The engineering list
+Full standard from scrub-pipeline.md, no half-remembering: streamed Blob fetch with
+loading ring (video is over 8MB) or plain Blob if under; poster painted first and fetch started
+only after; dt-normalized lerp in a rAF loop that rests; gated seeks with the error-handler
+deadlock escape; delta-gated DOM writes; band pacing validated by the flick test at
+120/240/360px; the four-layer legibility system (global scrim, per-band scrim on --k, the
+three-layer text-shadow token, chip scrims for mono labels); worst-frame audit at 3.5
+!
+1
+minimum; five static-hero gates matched character-for- character in CSS and JS and kept
+live with change listeners; complete without video; overflow-x clip on html AND body;
+reduced motion honored live in BOTH directions. Plus the whole-site-animated standard:
+one living element per section, one unique entrance per moment, everything eased.
+9. The copy gate
+Every viewer-facing line above ships verbatim. The built page must pass the Phase 9 grep
+gate (zero em dashes, zero stock words) plus the body-copy sweep for AI tells before
+anyone sees it. The band 1-3 triplet and the staccato subline are deliberate brand devices
+and stay.
+
+@@BREAK@@
+
+
+@@BREAK@@
+
+
+@@BREAK@@
+
+
+@@BREAK@@
+
+
+@@BREAK@@
+
+
+@@BREAK@@
+
+
+@@BREAK@@
+
+
+@@BREAK@@
+
+
+@@BREAK@@
