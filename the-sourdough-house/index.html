@@ -35,7 +35,7 @@
   --accent:#7B3B1B;
   --accent-hover:#94502A;
   --accent-muted:rgba(123,59,27,.18);
-  --text-secondary:#6E6152;
+  --text-secondary:#675B4D;   /* 4.72:1 on the panel, 5.3:1 on the canvas */
   --text-primary:#2A2018;
 
   --display:'Fraunces',Georgia,'Times New Roman',serif;
@@ -195,7 +195,11 @@ main{display:block}
 .band .btn{text-shadow:none}
 .btn-quiet{background:transparent;color:#FBF6EC;border-color:rgba(251,246,236,.5);box-shadow:none}
 .btn-quiet:hover{background:rgba(251,246,236,.12);border-color:rgba(251,246,236,.85)}
-@media (pointer:coarse){.btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center}}
+@media (pointer:coarse){
+  .btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+  .qa summary{min-height:44px;align-items:center}
+  nav.bar .links a{min-height:44px;display:inline-flex;align-items:center}
+}
 
 /* ---------- the static hero, for the five gates ---------- */
 #staticHero{display:none;position:relative;min-height:100svh;overflow:hidden;background:#2A2018}
