@@ -86,3 +86,44 @@ loaf already large, sharp and near the centre. That is an arrival frame, not
 the first frame of a descent, so scrolling down would have nowhere to travel.
 Rejected and re-rolled with the camera height stated far more explicitly and
 the room clutter cut back. Re-roll job: `b43b7972-a235-4240-ad0f-64ac7a5380e7`.
+
+## Phases 6 to 9: complete
+
+Hero: `kling3_0` in pro mode, 1920x1080, 6.04s, from the third starting
+frame. Approved at the video gate after the first take was rejected for
+never decelerating into an arrival. The ending now rests, measured: motion
+peaks mid-shot and falls to 0.41 against 0.28 at the start.
+
+Assets, all processed and hosted (see `the-sourdough-house/fetch-assets.sh`):
+hero-scrub.mp4 4.74MB at crf 21, hero-poster.jpg, hero-ending.jpg, and
+three step images graded to the hero's median.
+
+### What the browser self-test caught and what was done
+
+1. Flick test rejected the 400vh hero. Four bands got 48 to 78vh against
+   the 80 to 130vh plateau standard; bands 1 and 2 held for 2 and 4 flicks
+   and band 1 was skippable at 360px. Hero is now 560vh, ranges respread.
+   Now 6, 7, 7, 11 at 120px and nothing skippable.
+2. The static-hero gate never committed its state on first run, because
+   disableScrub() returned early with scrubOn starting false. Now null.
+3. Worst-frame legibility failed every band (1.39 to 2.80 against 3.5:1).
+   The footage is a bright sunlit room and light type could not win over
+   it. The four-layer system was inverted to dark type on a warm cream
+   lift. Now 6.35, 5.30, 5.46, 8.84.
+4. Body copy measured 4.29:1 on the panel, under the 4.5 floor.
+   --text-secondary moved to #675B4D, now 4.72:1.
+5. FAQ rows (28px) and the hold button (42px) were under the 44px touch
+   minimum. Fixed under coarse pointer.
+6. The three step images loaded at first paint, putting 1.45MB in front of
+   a visitor who had not scrolled. Now fetched on approach.
+
+Verified green: no console errors, no sideways scroll at any width, all 13
+entrances play with stagger delays retired, dividers draw, hold completes
+and eases back on release, form success state works, page complete with the
+video blocked, phone and reduced motion both take the static hero and never
+request the video.
+
+## What is left
+
+Phase 10 only. Deploy needs a machine that can reach Hostinger, which this
+environment's egress policy blocks. Everything else is done.

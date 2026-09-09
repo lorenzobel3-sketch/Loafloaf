@@ -1147,11 +1147,31 @@ if (scrubOn) runLoadRamp(); else loadK = 1;
    BELOW THE FOLD
    ============================================================ */
 
-/* the three step images, equal treatment */
-['shot1','shot2','shot3'].forEach(function(id, i){
-  var el = document.getElementById(id);
-  if (el) el.style.backgroundImage = "url('assets/step-" + (i + 1) + ".jpg')";
-});
+/* The three step images, equal treatment, and fetched only as they come
+   into reach. They are deliberately large and clean (about 1920px, one
+   near-transparent pass) because hosts recompress, so loading all three at
+   first paint put 1.45MB in front of a visitor who had not scrolled yet. */
+(function stepImages(){
+  var shots = ['shot1','shot2','shot3'].map(function(id){ return document.getElementById(id); })
+                .filter(Boolean);
+  function load(el, i){
+    if (el.dataset.loaded) return;
+    el.dataset.loaded = '1';
+    el.style.backgroundImage = "url('assets/step-" + (i + 1) + ".jpg')";
+  }
+  if (!('IntersectionObserver' in window)){
+    shots.forEach(load);
+    return;
+  }
+  var so = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (!e.isIntersecting) return;
+      load(e.target, shots.indexOf(e.target));
+      so.unobserve(e.target);
+    });
+  }, {rootMargin:'600px 0px'});   /* a screenful of warning, so it is in place before it is seen */
+  shots.forEach(function(el){ so.observe(el); });
+})();
 
 /* entrances, and the signature score drawing itself on scroll */
 var io = ('IntersectionObserver' in window) ? new IntersectionObserver(function(entries){
