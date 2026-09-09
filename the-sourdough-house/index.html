@@ -200,6 +200,196 @@ main{display:block}
 html.static-hero #hero{display:none}
 html.static-hero #staticHero{display:block}
 
+/* ============================================================
+   BELOW THE FOLD
+   No two adjacent sections share a skeleton.
+   ============================================================ */
+section.slab{position:relative;padding:clamp(5rem,11vh,9rem) 6vw}
+.lede{font-size:clamp(1.05rem,1.5vw,1.24rem);color:var(--text-secondary);max-width:56ch}
+h2{font-size:clamp(1.9rem,4.3vw,3.15rem);max-width:19ch}
+h3{font-size:clamp(1.15rem,1.7vw,1.42rem);font-weight:600}
+.kick{font-family:var(--mono);font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:1.1rem}
+
+/* the signature: the score, drawing itself left to right on scroll */
+.divider{display:block;width:100%;height:34px;overflow:visible;margin:0}
+.divider path{fill:none;stroke:var(--accent-muted);stroke-width:2.4;stroke-linecap:round;
+  stroke-dasharray:1000;stroke-dashoffset:1000;transition:stroke-dashoffset 1.5s var(--ease)}
+.divider.drawn path{stroke-dashoffset:0}
+
+/* entrances */
+.rise{opacity:0;transform:translateY(26px);
+  transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.rise.in{opacity:1;transform:none}
+.stagger > *{opacity:0;transform:translateY(22px);
+  transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.stagger.in > *{opacity:1;transform:none}
+.stagger.in > *:nth-child(1){transition-delay:.06s}
+.stagger.in > *:nth-child(2){transition-delay:.19s}
+.stagger.in > *:nth-child(3){transition-delay:.32s}
+/* retire the delays once the entrance is done, at matching specificity */
+.stagger.done > *:nth-child(1),
+.stagger.done > *:nth-child(2),
+.stagger.done > *:nth-child(3){transition-delay:0s !important}
+
+/* ---- 1. The label test: split, no kicker ---- */
+#label{background:var(--panel)}
+.split{display:grid;gap:clamp(2rem,5vw,4.5rem);grid-template-columns:1fr;align-items:start}
+@media (min-width:900px){.split{grid-template-columns:1fr 1fr}}
+.lists{display:grid;gap:1.4rem;grid-template-columns:1fr 1fr;margin-top:2.4rem}
+.list{background:var(--canvas);padding:1.6rem 1.5rem;border-radius:3px;
+  border:1px solid rgba(42,32,24,.1)}
+.list.ours{border-color:var(--accent);box-shadow:0 10px 30px rgba(123,59,27,.08)}
+.list h3{font-size:1rem;margin-bottom:1rem}
+.list ul{list-style:none;margin:0;padding:0;font-family:var(--mono);font-size:.83rem;
+  color:var(--text-secondary);line-height:2.05}
+.list.ours ul{color:var(--text-primary)}
+.list .count{font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;
+  margin-top:1.1rem;padding-top:.9rem;border-top:1px solid rgba(42,32,24,.12);color:var(--accent)}
+
+/* ---- 2. How the week goes: horizontal timeline on the score curve ---- */
+#week{overflow:hidden}
+.week-track{position:relative;margin-top:3rem}
+.week-curve{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.week-curve path{fill:none;stroke:var(--accent-muted);stroke-width:2.4;stroke-linecap:round;
+  stroke-dasharray:1200;stroke-dashoffset:1200;transition:stroke-dashoffset 1.8s var(--ease)}
+.week-curve.drawn path{stroke-dashoffset:0}
+.steps{display:grid;gap:2.2rem;grid-template-columns:1fr;position:relative;z-index:2}
+@media (min-width:820px){.steps{grid-template-columns:repeat(3,1fr);gap:2.6rem}}
+.step figure{margin:0}
+.step .shot{aspect-ratio:4/3;background:var(--panel) center/cover no-repeat;border-radius:3px;
+  filter:saturate(.96)}
+.step .no{font-family:var(--mono);font-size:.72rem;letter-spacing:.2em;color:var(--accent);
+  margin:1.1rem 0 .5rem}
+.step p{color:var(--text-secondary);margin-top:.5rem;max-width:34ch}
+@media (min-width:820px){.step:nth-child(2){transform:translateY(2.6rem)}
+  .step:nth-child(3){transform:translateY(.9rem)}}
+
+/* ---- 3. The thirty-six hour hold: the interactive moment ---- */
+#holdSection{background:var(--text-primary);color:#F3EADA;text-align:center;overflow:hidden}
+#holdSection h2{color:#FBF6EC;margin:0 auto;text-align:center}
+#holdSection .lede{color:rgba(243,234,218,.72);margin:1.2rem auto 0;text-align:center}
+.clockwrap{position:relative;width:min(320px,74vw);margin:3.2rem auto 0}
+.clock{display:block;width:100%;height:auto;overflow:visible}
+.clock .track{fill:none;stroke:rgba(243,234,218,.16);stroke-width:5}
+.clock .arc{fill:none;stroke:var(--accent-hover);stroke-width:5;stroke-linecap:round;
+  stroke-dasharray:534;stroke-dashoffset:calc(534 - 534 * var(--hp,0))}
+.clock .crumb{fill:rgba(243,234,218,.1);r:calc(30px + 34px * var(--hp,0))}
+.readout{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;pointer-events:none}
+.readout .hrs{font-family:var(--mono);font-size:clamp(2.1rem,6vw,2.9rem);letter-spacing:.02em}
+.readout .unit{font-family:var(--mono);font-size:.7rem;letter-spacing:.26em;text-transform:uppercase;
+  color:rgba(243,234,218,.62);margin-top:.45rem}
+.holdbtn{margin-top:2.2rem;background:transparent;color:#F3EADA;border:1px solid rgba(243,234,218,.42);
+  font-family:var(--mono);font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;
+  padding:1em 2em;border-radius:2px;cursor:pointer;touch-action:none;
+  transition:background .3s var(--ease),border-color .3s var(--ease)}
+.holdbtn:hover{background:rgba(243,234,218,.1);border-color:rgba(243,234,218,.8)}
+.proofs{list-style:none;padding:0;margin:2.8rem auto 0;max-width:44ch;display:grid;gap:.9rem;
+  text-align:left}
+.proofs li{opacity:.18;transform:translateY(6px);
+  transition:opacity .7s var(--ease),transform .7s var(--ease);
+  font-size:.98rem;padding-left:1.6rem;position:relative}
+.proofs li::before{content:"";position:absolute;left:0;top:.62em;width:.7rem;height:2px;
+  background:var(--accent-hover);border-radius:2px}
+#holdSection.hold-complete .proofs li{opacity:1;transform:none}
+#holdSection.hold-complete .proofs li:nth-child(2){transition-delay:.22s}
+#holdSection.hold-complete .proofs li:nth-child(3){transition-delay:.44s}
+
+/* ---- 4. What it costs: an offset price block ---- */
+.price-grid{display:grid;gap:clamp(2rem,4vw,3.4rem);grid-template-columns:1fr;align-items:center;
+  margin-top:2.8rem}
+@media (min-width:900px){.price-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)}}
+.pricecard{background:var(--panel);padding:2.4rem 2.2rem;border-radius:3px;
+  border:1px solid rgba(42,32,24,.1);position:relative;overflow:hidden}
+.pricecard .fig{font-family:var(--display);font-size:clamp(3rem,7vw,4.4rem);font-weight:700;
+  line-height:1;color:var(--accent)}
+.pricecard .per{font-family:var(--mono);font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--text-secondary);margin-top:.9rem}
+.breakdown{list-style:none;padding:0;margin:0;display:grid;gap:1.15rem}
+.breakdown li{display:grid;grid-template-columns:auto 1fr;gap:1rem;align-items:baseline;
+  padding-bottom:1.15rem;border-bottom:1px solid rgba(42,32,24,.1)}
+.breakdown li:last-child{border-bottom:0;padding-bottom:0}
+.breakdown .amt{font-family:var(--mono);font-size:.85rem;color:var(--accent);white-space:nowrap}
+.breakdown p{color:var(--text-secondary);font-size:.97rem;max-width:44ch}
+
+/* ---- 5. FAQ: a quiet single column, no cards ---- */
+#faq{background:var(--panel)}
+.qa{max-width:70ch;margin-top:2.4rem;display:grid;gap:0}
+.qa details{border-bottom:1px solid rgba(42,32,24,.14);padding:1.4rem 0}
+.qa summary{cursor:pointer;font-family:var(--display);font-weight:600;font-size:clamp(1.05rem,1.8vw,1.3rem);
+  list-style:none;display:flex;gap:1rem;align-items:baseline;transition:color .3s var(--ease)}
+.qa summary::-webkit-details-marker{display:none}
+.qa summary::after{content:"+";margin-left:auto;font-family:var(--mono);color:var(--accent);
+  transition:transform .4s var(--ease);font-size:1.1rem}
+.qa details[open] summary::after{transform:rotate(45deg)}
+.qa summary:hover{color:var(--accent)}
+.qa .ans{color:var(--text-secondary);margin-top:.95rem;max-width:62ch}
+
+/* ---- 6. Testimonials: offset quote rows, not a card grid ---- */
+.quotes{display:grid;gap:2.6rem;margin-top:3rem}
+@media (min-width:860px){.quotes{grid-template-columns:1fr 1fr;gap:3.2rem 4rem}
+  .quotes blockquote:nth-child(even){transform:translateY(2.2rem)}}
+.quotes blockquote{margin:0;position:relative;padding-left:1.6rem}
+.quotes blockquote::before{content:"";position:absolute;left:0;top:.35em;bottom:.35em;width:2px;
+  background:var(--accent-muted)}
+.quotes p{font-family:var(--display);font-size:clamp(1.1rem,1.9vw,1.42rem);font-weight:400;
+  line-height:1.45;max-width:34ch}
+.quotes cite{display:block;margin-top:1.1rem;font-style:normal;font-family:var(--mono);
+  font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-secondary)}
+
+/* ---- 7. The form ---- */
+#claim{background:var(--text-primary);color:#F3EADA;scroll-margin-top:0}
+#claim h2{color:#FBF6EC}
+#claim .lede{color:rgba(243,234,218,.72)}
+.form{margin-top:2.8rem;max-width:52ch;display:grid;gap:1.5rem}
+.field{display:grid;gap:.55rem}
+.field label{font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(243,234,218,.72)}
+.field input,.field select{background:rgba(243,234,218,.07);border:1px solid rgba(243,234,218,.26);
+  color:#F3EADA;font-family:var(--body);font-size:1rem;padding:.9em 1em;border-radius:2px;
+  transition:border-color .3s var(--ease),background .3s var(--ease)}
+.field input:hover,.field select:hover{border-color:rgba(243,234,218,.5)}
+.field input:focus-visible,.field select:focus-visible{outline:2px solid var(--accent-hover);
+  outline-offset:2px;background:rgba(243,234,218,.11)}
+.field select{appearance:none;cursor:pointer}
+.form .btn{justify-self:start;margin-top:.4rem}
+.form .note{font-size:.86rem;color:rgba(243,234,218,.55);max-width:46ch}
+.success{display:none;background:rgba(148,80,42,.16);border:1px solid var(--accent-hover);
+  padding:1.5rem 1.4rem;border-radius:3px;max-width:52ch;margin-top:2.8rem}
+.success.on{display:block;animation:pop .7s var(--ease)}
+@keyframes pop{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.success p{color:#F3EADA}
+.form.gone{display:none}
+
+/* ---- 8. Footer ---- */
+footer{background:var(--text-primary);color:rgba(243,234,218,.6);padding:0 6vw 4.5rem;
+  font-size:.88rem}
+footer .rule{height:1px;background:rgba(243,234,218,.16);margin-bottom:2.6rem}
+footer .cols{display:grid;gap:1.6rem}
+@media (min-width:760px){footer .cols{grid-template-columns:1.4fr 1fr;align-items:end}}
+footer .mark{display:flex;align-items:center;gap:.8rem;color:#F3EADA;font-family:var(--display);
+  font-weight:600;font-size:1.05rem;letter-spacing:.01em}
+footer .mark svg{width:34px;height:16px;overflow:visible}
+footer .mark path{fill:none;stroke:var(--accent-hover);stroke-width:3;stroke-linecap:round}
+footer .disclose{max-width:58ch;line-height:1.65}
+
+/* ---- nav ---- */
+nav.bar{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;
+  gap:1rem;padding:.9rem 6vw;background:rgba(237,230,216,.82);backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(42,32,24,.08)}
+nav.bar .mark{display:flex;align-items:center;gap:.7rem;font-family:var(--display);font-weight:600;
+  font-size:.98rem;text-decoration:none;letter-spacing:.01em}
+nav.bar .mark svg{width:30px;height:14px;overflow:visible}
+nav.bar .mark path{fill:none;stroke:var(--accent);stroke-width:3;stroke-linecap:round}
+nav.bar .links{display:none;gap:2rem;font-size:.92rem}
+@media (min-width:780px){nav.bar .links{display:flex}}
+nav.bar .links a{text-decoration:none;color:var(--text-secondary);transition:color .3s var(--ease)}
+nav.bar .links a:hover{color:var(--accent)}
+nav.bar .btn{padding:.62em 1.15em;font-size:.9rem}
+
+body.paused *,body.paused *::before,body.paused *::after{animation-play-state:paused !important}
+
 /* The five static-hero gates. These five strings are repeated character for
    character in the GATES array in JS. If one side changes, change both. */
 @media (max-width: 720px){#hero{display:none}#staticHero{display:block}}
@@ -281,9 +471,274 @@ html.static-hero #staticHero{display:block}
   </div>
 </section>
 
+<nav class="bar">
+  <a class="mark" href="#top">
+    <svg viewBox="0 0 300 22" aria-hidden="true" preserveAspectRatio="none">
+      <path d="M4 16 C60 4, 118 3, 168 8 S262 18, 296 7"/>
+    </svg>
+    The Sourdough House
+  </a>
+  <div class="links">
+    <a href="#label">The label test</a>
+    <a href="#week">The week</a>
+    <a href="#cost">What it costs</a>
+    <a href="#faq">Questions</a>
+  </div>
+  <a class="btn" href="#claim">Claim a loaf</a>
+</nav>
+
 <main id="main" tabindex="-1">
-  <!-- sections are appended in the next build pass -->
+
+  <!-- ============ 1. THE LABEL TEST ============ -->
+  <section class="slab" id="label">
+    <div class="split">
+      <div class="rise">
+        <h2>Read the back of the bag.</h2>
+        <p class="lede">Most loaves sold as sourdough are raised on commercial yeast and finished
+          the same day. The label is where it shows. Real sourdough needs four things. If the list
+          runs past four, something else is doing the lifting.</p>
+      </div>
+      <div class="rise">
+        <div class="lists">
+          <div class="list">
+            <h3>A supermarket loaf</h3>
+            <ul>
+              <li>Wheat flour</li><li>Water</li><li>Yeast</li><li>Salt</li>
+              <li>Vegetable oil</li><li>Sugar</li><li>Emulsifier</li>
+              <li>Vinegar</li><li>Enzymes</li><li>Flour treatment agent</li>
+              <li>Fermented wheat flour</li>
+            </ul>
+            <p class="count">Eleven things</p>
+          </div>
+          <div class="list ours">
+            <h3>Ours</h3>
+            <ul><li>Flour</li><li>Water</li><li>Salt</li><li>Time</li></ul>
+            <p class="count">Four things</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <svg class="divider draw" viewBox="0 0 1000 34" aria-hidden="true" preserveAspectRatio="none">
+    <path d="M10 24 C220 6, 460 4, 640 14 S900 30, 990 10"/>
+  </svg>
+
+  <!-- ============ 2. HOW THE WEEK GOES ============ -->
+  <section class="slab" id="week">
+    <p class="kick rise">Thursday to Sunday</p>
+    <h2 class="rise">One loaf takes most of a week.</h2>
+    <div class="week-track">
+      <svg class="week-curve draw" viewBox="0 0 1000 300" aria-hidden="true" preserveAspectRatio="none">
+        <path d="M40 90 C260 40, 420 210, 600 150 S880 60, 970 130"/>
+      </svg>
+      <div class="steps stagger">
+        <article class="step">
+          <figure>
+            <div class="shot" id="shot1" role="img" aria-label="Flour and water being fed to the starter"></div>
+            <figcaption>
+              <p class="no">01 / Thursday</p>
+              <h3>Feed the starter</h3>
+              <p>Flour and water, twice a day, until it doubles and smells like green apples.
+                Nothing else goes in. Nothing else ever does.</p>
+            </figcaption>
+          </figure>
+        </article>
+        <article class="step">
+          <figure>
+            <div class="shot" id="shot2" role="img" aria-label="Dough being folded by hand in a bowl"></div>
+            <figcaption>
+              <p class="no">02 / Friday</p>
+              <h3>Fold, then wait</h3>
+              <p>Four folds across the afternoon, then the long cold rest. This is the part
+                nobody sells you, and the part you can taste.</p>
+            </figcaption>
+          </figure>
+        </article>
+        <article class="step">
+          <figure>
+            <div class="shot" id="shot3" role="img" aria-label="A scored loaf going into a hot oven"></div>
+            <figcaption>
+              <p class="no">03 / Saturday night</p>
+              <h3>Score and bake</h3>
+              <p>One cut with the blade, then heat and steam until the crust cracks and sings
+                on the rack. Yours the next morning.</p>
+            </figcaption>
+          </figure>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. THE THIRTY-SIX HOUR HOLD ============ -->
+  <section class="slab" id="holdSection">
+    <p class="kick">The part you pay for</p>
+    <h2>Hold it for thirty-six hours.</h2>
+    <p class="lede">You cannot rush this bit, and neither can we. Press and hold to run the clock.
+      Let go early and it eases back down, the way a rushed dough does.</p>
+
+    <div class="clockwrap">
+      <svg class="clock" viewBox="0 0 200 200" aria-hidden="true">
+        <circle class="track" cx="100" cy="100" r="85"/>
+        <circle class="crumb" cx="100" cy="100"/>
+        <circle class="arc" cx="100" cy="100" r="85"
+                transform="rotate(-90 100 100)"/>
+      </svg>
+      <div class="readout">
+        <span class="hrs" id="hrs" data-count="36">00</span>
+        <span class="unit">Hours in</span>
+      </div>
+    </div>
+
+    <button class="holdbtn" id="holdBtn" aria-describedby="holdHelp">Press and hold</button>
+    <p id="holdHelp" class="sr">Press and hold the button to advance the fermentation clock to
+      thirty-six hours and reveal what the long rest does.</p>
+
+    <ul class="proofs">
+      <li>The acid builds slowly, so the crumb tastes of something other than yeast.</li>
+      <li>The long rest breaks down what makes a fast loaf sit heavy.</li>
+      <li>The crust holds because the structure had time to form, not because of an additive.</li>
+    </ul>
+  </section>
+
+  <!-- ============ 4. WHAT IT COSTS, AND WHY ============ -->
+  <section class="slab" id="cost">
+    <p class="kick rise">Where the money goes</p>
+    <h2 class="rise">Yes, it costs more than the supermarket.</h2>
+    <div class="price-grid">
+      <div class="pricecard rise">
+        <p class="fig">&pound;6.50</p>
+        <p class="per">One loaf, collected Sunday</p>
+      </div>
+      <ul class="breakdown rise">
+        <li><span class="amt">&pound;0.80</span>
+          <p>Organic stoneground flour from a mill two counties over. It costs about three times
+            what white commodity flour costs, and it is the only thing in here with a flavour.</p></li>
+        <li><span class="amt">&pound;0.05</span>
+          <p>Water and salt. This is the honest part. They cost almost nothing.</p></li>
+        <li><span class="amt">&pound;5.65</span>
+          <p>Thirty-six hours, a hot oven overnight, and a batch small enough that every loaf gets
+            looked at. This is the whole business, and it is why a machine cannot do it cheaper.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <svg class="divider draw" viewBox="0 0 1000 34" aria-hidden="true" preserveAspectRatio="none">
+    <path d="M10 12 C220 28, 460 30, 640 18 S900 4, 990 22"/>
+  </svg>
+
+  <!-- ============ 5. QUESTIONS PEOPLE ACTUALLY ASK ============ -->
+  <section class="slab" id="faq">
+    <h2 class="rise">Questions people actually ask.</h2>
+    <div class="qa rise">
+      <details>
+        <summary>Why does it cost more than the one in the supermarket?</summary>
+        <p class="ans">Because of the thirty-six hours. Three of the four ingredients cost pennies.
+          You are paying for the time nobody else will give the bread, plus flour that is worth
+          fermenting in the first place.</p>
+      </details>
+      <details>
+        <summary>How do I tell real sourdough from the other kind?</summary>
+        <p class="ans">Read the ingredients. Four is right. If you see yeast, oil, sugar, vinegar
+          or enzymes, it was raised fast and given a sourdough label. The other tell is the price
+          of speed, a loaf that goes stale hard by Tuesday.</p>
+      </details>
+      <details>
+        <summary>Why only Sundays?</summary>
+        <p class="ans">The bake runs Saturday night and the loaves come out in the early hours.
+          One bake, one batch, one morning. Baking twice would mean cutting the rest short, and
+          the rest is the point.</p>
+      </details>
+      <details>
+        <summary>Is it gluten free?</summary>
+        <p class="ans">No. It is made of wheat flour and it contains gluten. The long ferment
+          changes the flavour and the texture, and we are not going to tell you it does anything
+          for your health.</p>
+      </details>
+      <details>
+        <summary>How long does it keep?</summary>
+        <p class="ans">Cut side down on a board, four or five days. It will not go stale the way
+          a fast loaf does. Day three toasted is the best it gets.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ 6. WHAT PEOPLE SAY ============ -->
+  <section class="slab" id="says">
+    <p class="kick rise">From the counter</p>
+    <h2 class="rise">What people say.</h2>
+    <div class="quotes rise">
+      <blockquote>
+        <p>I read the back of my usual bag after this and put it straight back on the shelf.</p>
+        <cite>Marta, three streets over</cite>
+      </blockquote>
+      <blockquote>
+        <p>Sunday morning smells different in this house now. My kids fight over the end piece.</p>
+        <cite>Dan, collects at eight</cite>
+      </blockquote>
+      <blockquote>
+        <p>I thought six pounds was mad for a loaf. Then I made it last five days.</p>
+        <cite>Priya, converted in one week</cite>
+      </blockquote>
+      <blockquote>
+        <p>The crust actually cracks. I had forgotten bread did that.</p>
+        <cite>Tom, back every week</cite>
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- ============ 7. THE FORM ============ -->
+  <section class="slab" id="claim">
+    <p class="kick">This week's bake</p>
+    <h2>Claim this week's loaf.</h2>
+    <p class="lede">The bake is small on purpose. Put your name down and we will email you Friday
+      night when the dough goes in.</p>
+
+    <form class="form" id="claimForm" novalidate>
+      <div class="field">
+        <label for="name">Your name</label>
+        <input id="name" name="name" type="text" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label for="loaves">How many loaves</label>
+        <select id="loaves" name="loaves">
+          <option>One</option><option>Two</option><option>Three</option>
+        </select>
+      </div>
+      <button class="btn" type="submit">Claim this week's loaf</button>
+      <p class="note">This is a demonstration site for an invented bakery, so nothing is sent
+        anywhere and no loaf will arrive.</p>
+    </form>
+
+    <div class="success" id="success" role="status" aria-live="polite">
+      <p>You're on the list for Sunday. We'll email you Friday night.</p>
+    </div>
+  </section>
+
 </main>
+
+<footer>
+  <div class="rule"></div>
+  <div class="cols">
+    <div>
+      <div class="mark">
+        <svg viewBox="0 0 300 22" aria-hidden="true" preserveAspectRatio="none">
+          <path d="M4 16 C60 4, 118 3, 168 8 S262 18, 296 7"/>
+        </svg>
+        The Sourdough House
+      </div>
+      <p class="disclose" style="margin-top:1rem">The Sourdough House is an invented brand, made to
+        demonstrate what this kind of website can do. There is no bakery, no bake and no loaf.
+        The film and the photographs on this page were generated, and the quotes are written,
+        not collected.</p>
+    </div>
+    <p>Flour. Water. Salt. And thirty-six hours.</p>
+  </div>
+</footer>
 
 </div>
 
@@ -670,6 +1125,117 @@ document.addEventListener('visibilitychange', function(){
 
 applyHeroMode();
 if (scrubOn) runLoadRamp(); else loadK = 1;
+
+/* ============================================================
+   BELOW THE FOLD
+   ============================================================ */
+
+/* the three step images, equal treatment */
+['shot1','shot2','shot3'].forEach(function(id, i){
+  var el = document.getElementById(id);
+  if (el) el.style.backgroundImage = "url('assets/step-" + (i + 1) + ".jpg')";
+});
+
+/* entrances, and the signature score drawing itself on scroll */
+var io = ('IntersectionObserver' in window) ? new IntersectionObserver(function(entries){
+  entries.forEach(function(e){
+    if (!e.isIntersecting) return;
+    var el = e.target;
+    if (el.classList.contains('draw')) el.classList.add('drawn');
+    else {
+      el.classList.add('in');
+      if (el.classList.contains('stagger')){
+        /* retire the stagger delays once the entrance is done, so later
+           siblings do not hover with a permanent lag */
+        setTimeout(function(){ el.classList.add('done'); }, 1400);
+      }
+    }
+    io.unobserve(el);
+  });
+}, {threshold:0.14, rootMargin:'0px 0px -8% 0px'}) : null;
+
+if (io){
+  document.querySelectorAll('.rise,.stagger,.draw').forEach(function(el){ io.observe(el); });
+} else {
+  document.querySelectorAll('.rise,.stagger').forEach(function(el){ el.classList.add('in','done'); });
+  document.querySelectorAll('.draw').forEach(function(el){ el.classList.add('drawn'); });
+}
+
+/* ---------- the one interactive moment: the thirty-six hour hold ---------- */
+(function hold(){
+  var btn  = document.getElementById('holdBtn');
+  var wrap = document.querySelector('.clockwrap');
+  var sect = document.getElementById('holdSection');
+  var hrs  = document.getElementById('hrs');
+  if (!btn || !wrap) return;
+
+  var p = 0, holding = false, raf = null, last = 0, lastShown = '', lastAt = 0;
+  var RISE = 2600, FALL = 4200;   /* ms: it builds while held, eases back when released */
+
+  function paint(now){
+    if (now - lastAt > 100){                       /* ~10Hz, and only on change */
+      var t = String(Math.round(p * 36)).padStart(2, '0');
+      if (t !== lastShown){ lastShown = t; lastAt = now; hrs.textContent = t; }
+    }
+    wrap.style.setProperty('--hp', p.toFixed(4));
+  }
+
+  function step(now){
+    var dt = Math.min(100, now - (last || now));
+    last = now;
+    p += holding ? (dt / RISE) : -(dt / FALL);     /* release eases down, never snaps */
+    p = clamp(p, 0, 1);
+    paint(now);
+    if (p >= 1 && holding){
+      sect.classList.add('hold-complete');
+      sect.dataset.userCompleted = '1';
+    }
+    if ((holding && p < 1) || (!holding && p > 0)){
+      raf = requestAnimationFrame(step);
+    } else { raf = null; last = 0; }
+  }
+
+  function start(e){
+    if (e && e.cancelable) e.preventDefault();
+    if (rmq.matches){ p = 1; paint(performance.now()); sect.classList.add('hold-complete'); return; }
+    holding = true;
+    if (raf === null) raf = requestAnimationFrame(step);
+  }
+  function end(){
+    holding = false;
+    if (raf === null && p > 0) raf = requestAnimationFrame(step);
+  }
+
+  btn.addEventListener('pointerdown', start);
+  ['pointerup','pointercancel','pointerleave','blur'].forEach(function(ev){
+    btn.addEventListener(ev, end);
+  });
+  btn.addEventListener('keydown', function(e){
+    if (e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); start(); }
+  });
+  btn.addEventListener('keyup', function(e){
+    if (e.key === ' ' || e.key === 'Enter') end();
+  });
+
+  /* reduced motion gets the finished state with no hold required */
+  if (rmq.matches){ p = 1; paint(performance.now()); sect.classList.add('hold-complete'); }
+})();
+
+/* ---------- the form: a JS-only success state, honestly labelled ---------- */
+(function form(){
+  var f = document.getElementById('claimForm');
+  var ok = document.getElementById('success');
+  if (!f || !ok) return;
+  f.addEventListener('submit', function(e){
+    e.preventDefault();
+    var name = f.querySelector('#name'), email = f.querySelector('#email');
+    if (!name.value.trim()){ name.focus(); return; }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.value)){ email.focus(); return; }
+    f.classList.add('gone');
+    ok.classList.add('on');
+    ok.focus && ok.focus();
+  });
+})();
 
 })();
 </script>
