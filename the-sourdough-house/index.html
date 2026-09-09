@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Sourdough House</title>
+<meta name="description" content="One loaf made of four things: flour, water, salt and time. Baked Saturday night, yours Sunday morning.">
+<meta name="theme-color" content="#EDE6D8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23EDE6D8'/%3E%3Cpath d='M6 21C11 9 21 9 26 21' stroke='%237B3B1B' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+
+<!-- DEPLOY STEP: patch og:url and og:image with the live absolute URL before zipping -->
+<meta property="og:title" content="The Sourdough House">
+<meta property="og:description" content="One loaf. Baked Saturday night. Yours Sunday morning.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="REPLACE_AT_DEPLOY">
+<meta property="og:image" content="REPLACE_AT_DEPLOY">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Karla:wght@400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   THE SOURDOUGH HOUSE
+   Palette sampled from the world of the footage. Cream is on the
+   banned AI-cliche list and the deviation is deliberate: cream,
+   linen and stoneware are this subject's own material world. It is
+   earned with tones taken from the footage itself, a burnt crust
+   ridge instead of terracotta as the accent, and no two adjacent
+   sections sharing a skeleton.
+   ============================================================ */
+:root{
+  --canvas:#EDE6D8;
+  --panel:#E3D9C6;
+  --accent:#7B3B1B;
+  --accent-hover:#94502A;
+  --accent-muted:rgba(123,59,27,.18);
+  --text-secondary:#6E6152;
+  --text-primary:#2A2018;
+
+  --display:'Fraunces',Georgia,'Times New Roman',serif;
+  --body:'Karla','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --mono:'DM Mono','SFMono-Regular',Consolas,monospace;
+
+  --tshadow:0 1px 2px rgba(5,5,10,.95),0 3px 12px rgba(5,5,10,.78),0 10px 44px rgba(5,5,10,.8);
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --ease-soft:cubic-bezier(.4,0,.2,1);
+
+  --hero-vh:400;
+}
+
+*{box-sizing:border-box}
+html,body{overflow-x:hidden;overflow-x:clip}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--canvas);
+  color:var(--text-primary);
+  font-family:var(--body);
+  font-weight:400;
+  font-size:clamp(16px,1.05vw + 12px,19px);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.08;margin:0;letter-spacing:-.015em}
+p{margin:0}
+a{color:inherit}
+img{max-width:100%;display:block}
+
+.skip{position:absolute;left:-9999px;top:0;background:var(--accent);color:#fff;padding:.7em 1.1em;z-index:200;border-radius:0 0 8px 0}
+.skip:focus{left:0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+
+/* ---------- the fixed background environment layer ---------- */
+.env{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(120% 80% at 12% 0%,rgba(255,246,226,.75) 0%,rgba(255,246,226,0) 55%),
+    radial-gradient(100% 70% at 90% 100%,rgba(123,59,27,.07) 0%,rgba(123,59,27,0) 60%);
+  animation:envdrift 90s var(--ease-soft) -30s infinite alternate}
+@keyframes envdrift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(0,-1.5%,0) scale(1.04)}}
+
+/* whisper-level flour drift */
+.motes{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.5}
+.mote{position:absolute;width:3px;height:3px;border-radius:50%;background:rgba(255,252,244,.9);
+  filter:blur(.4px);animation:mote 90s linear infinite}
+@keyframes mote{
+  0%{transform:translate3d(0,110vh,0);opacity:0}
+  8%{opacity:.7}
+  92%{opacity:.5}
+  100%{transform:translate3d(3vw,-12vh,0);opacity:0}
+}
+
+.wrap{position:relative;z-index:2}
+main{display:block}
+
+/* ============================================================
+   THE HERO
+   ============================================================ */
+#hero{position:relative;height:calc(var(--hero-vh) * 1vh)}
+.stage{position:sticky;top:0;height:100vh;overflow:hidden;background:#2A2018}
+
+.poster{position:absolute;inset:0;background-size:cover;background-position:center;
+  transition:opacity .8s var(--ease-soft)}
+#heroVideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  opacity:0;transition:opacity .7s var(--ease-soft);will-change:transform;transform:translateZ(0)}
+.stage.video-ready #heroVideo{opacity:1}
+.stage.video-ready .poster{opacity:0}
+
+/* 1. the global base scrim, always on */
+.scrim{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 120% 90% at 50% 45%,rgba(10,10,18,0) 35%,rgba(10,10,18,.62) 100%)}
+
+/* the honest loading ring */
+.ring{position:absolute;right:28px;bottom:26px;width:46px;height:46px;color:rgba(255,250,240,.85);
+  transform:rotate(-90deg);z-index:6}
+.ring circle{transition:stroke-dashoffset .18s linear}
+.chev{position:absolute;right:30px;bottom:28px;z-index:6;color:rgba(255,250,240,.8);
+  animation:chev 2.6s var(--ease-soft) infinite}
+@keyframes chev{0%,100%{transform:translateY(0);opacity:.55}50%{transform:translateY(7px);opacity:1}}
+
+/* ---------- caption bands ---------- */
+.bands{position:absolute;inset:0;z-index:5}
+.band{position:absolute;left:0;right:0;opacity:0;pointer-events:none;
+  color:#FBF6EC;text-shadow:var(--tshadow);padding:0 6vw}
+.band.live{pointer-events:auto}
+/* 2. the per-band scrim, rides the band opacity and deepens with --k */
+.band::before{content:"";position:absolute;inset:-6% -4%;pointer-events:none;z-index:-1;
+  opacity:calc(.25 + .75*var(--k,1));
+  background:radial-gradient(ellipse 74% 62% at 50% 50%,rgba(5,5,10,.66) 0%,rgba(5,5,10,.44) 46%,rgba(5,5,10,0) 76%)}
+
+/* bands 1 to 3 sit in the upper two thirds, clear of the action lane */
+.band-a,.band-b,.band-c{top:15vh}
+.band-a .line,.band-b .line,.band-c .line{
+  font-family:var(--display);font-weight:600;
+  font-size:clamp(2.1rem,6.4vw,5.2rem);line-height:1.04;max-width:17ch}
+.band-c::before{background:radial-gradient(ellipse 74% 62% at 50% 50%,rgba(5,5,10,.72) 0%,rgba(5,5,10,.48) 46%,rgba(5,5,10,0) 76%)}
+
+/* the settle band sits above the loaf, which lands left of centre */
+.band-d{top:11vh}
+.band-d .kicker{font-family:var(--mono);font-size:.76rem;letter-spacing:.24em;text-transform:uppercase;
+  color:rgba(251,246,236,.82);margin-bottom:1.1rem}
+.band-d h1{font-size:clamp(1.9rem,5.1vw,4.1rem);letter-spacing:.005em;font-weight:700;max-width:15ch}
+.band-d .sub{font-size:clamp(1rem,1.5vw,1.22rem);margin-top:1.1rem;max-width:34ch;
+  color:rgba(251,246,236,.93)}
+.band-d .cta-row{margin-top:1.8rem;display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
+
+/* the signature rule under the settle headline */
+.score-rule{display:block;width:min(30ch,62vw);height:22px;margin-top:1.2rem;overflow:visible}
+.score-rule path{fill:none;stroke:var(--accent);stroke-width:3.4;stroke-linecap:round;
+  filter:drop-shadow(0 2px 8px rgba(5,5,10,.5))}
+
+/* word and character split spans */
+.w{display:inline-block;white-space:pre}
+.c{display:inline-block;will-change:transform,opacity}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* entrance (f) drift-down, band 1: echoes the fall through the air */
+.band-a .w{--kc:clamp(0,(var(--k,0) - var(--th,0))*2.8,1);opacity:var(--kc);
+  transform:translateY(calc((1 - var(--kc)) * -26px))}
+/* entrance (a) scatter, band 2: echoes flour dust settling */
+.band-b .c{--kc:clamp(0,(var(--k,0) - var(--th,0))*2.6,1);opacity:var(--kc);
+  transform:translate(calc((1 - var(--kc))*var(--jx,0px)),calc((1 - var(--kc))*var(--jy,0px)))
+            rotate(calc((1 - var(--kc))*var(--jr,0deg)))}
+/* entrance (c) blur-to-sharp, band 3: echoes focus arriving on the loaf */
+.band-c .soft,.band-c .sharp{grid-area:1/1}
+.band-c .stack{display:grid}
+.band-c .soft{filter:blur(11px);opacity:calc(1 - var(--k,0))}
+.band-c .sharp{opacity:var(--k,0)}
+/* entrance (e) word-by-word rise into a staged settle, band 4 */
+.band-d h1 .w{--kc:clamp(0,(var(--k,0) - var(--th,0))*3,1);opacity:var(--kc);
+  transform:translateY(calc((1 - var(--kc)) * 30px))}
+.band-d .score-rule{opacity:clamp(0,(var(--k,0) - .52)*4,1)}
+.band-d .sub{--ks:clamp(0,(var(--k,0) - .66)*4,1);opacity:var(--ks);
+  transform:translateY(calc((1 - var(--ks)) * 14px))}
+.band-d .cta-row{--kb:clamp(0,(var(--k,0) - .78)*5,1);opacity:var(--kb);
+  transform:translateY(calc((1 - var(--kb)) * 14px))}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-block;background:var(--accent);color:#FCF7EE;text-decoration:none;
+  font-family:var(--body);font-weight:500;font-size:1rem;letter-spacing:.012em;
+  padding:.92em 1.7em;border-radius:2px;border:1px solid transparent;cursor:pointer;
+  transition:background .34s var(--ease),transform .34s var(--ease),box-shadow .34s var(--ease);
+  box-shadow:0 2px 0 rgba(42,32,24,.16)}
+.btn:hover{background:var(--accent-hover);transform:translateY(-2px);box-shadow:0 8px 22px rgba(123,59,27,.26)}
+.band .btn{text-shadow:none}
+.btn-quiet{background:transparent;color:#FBF6EC;border-color:rgba(251,246,236,.5);box-shadow:none}
+.btn-quiet:hover{background:rgba(251,246,236,.12);border-color:rgba(251,246,236,.85)}
+@media (pointer:coarse){.btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center}}
+
+/* ---------- the static hero, for the five gates ---------- */
+#staticHero{display:none;position:relative;min-height:100svh;overflow:hidden;background:#2A2018}
+#staticHero .shot{position:absolute;inset:0;background-size:cover;background-position:52% 62%}
+#staticHero .scrim{background:linear-gradient(180deg,rgba(10,10,18,.62) 0%,rgba(10,10,18,.28) 42%,rgba(10,10,18,.78) 100%)}
+#staticHero .inner{position:relative;z-index:3;min-height:100svh;display:flex;flex-direction:column;
+  justify-content:flex-end;padding:12vh 7vw 9vh;color:#FBF6EC;text-shadow:var(--tshadow)}
+#staticHero h1{font-size:clamp(2rem,8.4vw,3.4rem);font-weight:700;max-width:14ch}
+#staticHero .sub{margin-top:1.1rem;font-size:clamp(1rem,4vw,1.15rem);max-width:30ch;color:rgba(251,246,236,.93)}
+#staticHero .cta-row{margin-top:1.9rem}
+html.static-hero #hero{display:none}
+html.static-hero #staticHero{display:block}
+
+/* The five static-hero gates. These five strings are repeated character for
+   character in the GATES array in JS. If one side changes, change both. */
+@media (max-width: 720px){#hero{display:none}#staticHero{display:block}}
+@media (orientation: portrait) and (max-width: 1024px){#hero{display:none}#staticHero{display:block}}
+@media (orientation: portrait) and (pointer: coarse){#hero{display:none}#staticHero{display:block}}
+@media (orientation: landscape) and (pointer: coarse) and (max-height: 560px){#hero{display:none}#staticHero{display:block}}
+@media (prefers-reduced-motion: reduce){#hero{display:none}#staticHero{display:block}}
+
+/* scrub-capable but short: keep the scrub, drop the overlays with no room */
+@media (max-height:560px){.ring,.chev{display:none}}
+
+/* ---------- reduced motion, honoured completely ---------- */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;transition-delay:0s !important;
+    scroll-behavior:auto !important}
+  .env,.motes{animation:none}
+  .mote{display:none}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the bread</a>
+
+<div class="env" aria-hidden="true"></div>
+<div class="motes" id="motes" aria-hidden="true"></div>
+
+<div class="wrap">
+
+<!-- ============ THE SCROLL HERO ============ -->
+<section id="hero" aria-label="The morning descent">
+  <div class="stage" id="stage">
+    <div class="poster" id="poster" aria-hidden="true"></div>
+    <video id="heroVideo" preload="none" muted playsinline aria-hidden="true" tabindex="-1"></video>
+    <div class="scrim" aria-hidden="true"></div>
+
+    <svg class="ring" id="ring" viewBox="0 0 48 48" aria-hidden="true">
+      <circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3"
+              stroke-dasharray="126" style="stroke-dashoffset:var(--ld,126)"/>
+    </svg>
+
+    <div class="bands" id="bands">
+      <div class="band band-a" data-a="0" data-b="0.16">
+        <div class="line" data-split="word">Four things go in.</div>
+      </div>
+      <div class="band band-b" data-a="0.20" data-b="0.42" data-spread="0.34">
+        <div class="line" data-split="char">Flour. Water. Salt.</div>
+      </div>
+      <div class="band band-c" data-a="0.46" data-b="0.68">
+        <div class="line stack">
+          <span class="soft" aria-hidden="true">And thirty-six hours.</span>
+          <span class="sharp">And thirty-six hours.</span>
+        </div>
+      </div>
+      <div class="band band-d live" data-a="0.74" data-b="1" data-ramp="0.036">
+        <p class="kicker">Batch no. 41</p>
+        <h1 data-split="word">THE SOURDOUGH HOUSE</h1>
+        <svg class="score-rule" viewBox="0 0 300 22" aria-hidden="true" preserveAspectRatio="none">
+          <path d="M4 16 C60 4, 118 3, 168 8 S262 18, 296 7"/>
+        </svg>
+        <p class="sub">One loaf. Baked Saturday night. Yours Sunday morning.</p>
+        <div class="cta-row">
+          <a class="btn" href="#claim">Claim this week's loaf</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ THE STATIC HERO (phones, reduced motion) ============ -->
+<section id="staticHero" aria-label="The Sourdough House">
+  <div class="shot" id="staticShot" aria-hidden="true"></div>
+  <div class="scrim" aria-hidden="true"></div>
+  <div class="inner">
+    <h1>Flour. Water. Salt. And thirty-six hours.</h1>
+    <p class="sub">One loaf. Baked Saturday night. Yours Sunday morning.</p>
+    <div class="cta-row"><a class="btn" href="#claim">Claim this week's loaf</a></div>
+  </div>
+</section>
+
+<main id="main" tabindex="-1">
+  <!-- sections are appended in the next build pass -->
+</main>
+
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ============================================================
+   Assets. VIDEO_BYTES is the real encoded size and is the
+   fallback when the host omits Content-Length.
+   ============================================================ */
+var VIDEO_URL   = 'assets/hero-scrub.mp4';
+var POSTER_URL  = 'assets/hero-poster.jpg';
+var ENDING_URL  = 'assets/hero-ending.jpg';
+var VIDEO_BYTES = 5400000;   /* PATCHED AFTER ENCODE */
+
+var stage   = document.getElementById('stage');
+var video   = document.getElementById('heroVideo');
+var poster  = document.getElementById('poster');
+var ring    = document.getElementById('ring');
+var heroEl  = document.getElementById('hero');
+var bandEls = [].slice.call(document.querySelectorAll('.band'));
+
+document.getElementById('staticShot').style.backgroundImage = "url('" + ENDING_URL + "')";
+
+/* ============================================================
+   Seeded split, done once at load, so the scatter is identical
+   on every visit.
+   ============================================================ */
+function rng(seed){
+  var s = seed >>> 0;
+  return function(){ s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
+}
+
+function splitText(el, mode, spread){
+  var text = el.textContent;
+  var rand = rng(text.length * 7919 + mode.length);
+  var srOnly = document.createElement('span');
+  srOnly.className = 'sr';
+  srOnly.textContent = text;
+  var visual = document.createElement('span');
+  visual.setAttribute('aria-hidden','true');
+
+  var words = text.split(' ');
+  var total = text.replace(/ /g,'').length;
+  var charIndex = 0;
+
+  words.forEach(function(word, wi){
+    var w = document.createElement('span');
+    w.className = 'w';
+    if (mode === 'word'){
+      w.style.setProperty('--th', (wi / Math.max(1, words.length) * 0.55).toFixed(3));
+    }
+    for (var i = 0; i < word.length; i++){
+      var c = document.createElement('span');
+      c.className = 'c';
+      c.textContent = word[i];
+      if (mode === 'char'){
+        var th = (charIndex / Math.max(1,total)) * (spread || 0.34) + rand() * 0.06;
+        c.style.setProperty('--th', th.toFixed(3));
+        c.style.setProperty('--jx', ((rand()*2-1)*46).toFixed(1) + 'px');
+        c.style.setProperty('--jy', ((rand()*2-1)*34).toFixed(1) + 'px');
+        c.style.setProperty('--jr', ((rand()*2-1)*16).toFixed(1) + 'deg');
+      }
+      charIndex++;
+      w.appendChild(c);
+    }
+    visual.appendChild(w);
+    if (wi < words.length - 1) visual.appendChild(document.createTextNode(' '));
+  });
+
+  el.textContent = '';
+  el.appendChild(srOnly);
+  el.appendChild(visual);
+}
+
+bandEls.forEach(function(band){
+  var spread = parseFloat(band.getAttribute('data-spread')) || 0.34;
+  [].slice.call(band.querySelectorAll('[data-split]')).forEach(function(el){
+    splitText(el, el.getAttribute('data-split'), spread);
+  });
+  band.__a = parseFloat(band.getAttribute('data-a'));
+  band.__b = parseFloat(band.getAttribute('data-b'));
+  band.__ramp = parseFloat(band.getAttribute('data-ramp')) || 0;
+  band.__op = -1;   /* delta gate caches */
+  band.__k  = -1;
+});
+
+/* ============================================================
+   Band maths
+   ============================================================ */
+function smoothstep(p, e0, e1){
+  var t = Math.min(1, Math.max(0, (p - e0) / (e1 - e0)));
+  return t * t * (3 - 2 * t);
+}
+function clamp(v, lo, hi){ return Math.min(hi, Math.max(lo, v)); }
+
+var loadK = 0;   /* band one's one-time load ramp, hands over to scroll */
+
+function updateCaptions(p){
+  for (var i = 0; i < bandEls.length; i++){
+    var band = bandEls[i], a = band.__a, b = band.__b;
+    var f = Math.min(0.02, (b - a) / 3);
+    var inEase  = (i === 0) ? 1 : smoothstep(p, a, a + f);
+    var outEase = (i === bandEls.length - 1) ? 1 : (1 - smoothstep(p, b - f, b));
+    var op = inEase * outEase;
+
+    var ramp = band.__ramp || Math.min(0.025, (b - a) * 0.35);
+    var k = clamp((p - a) / ramp, 0, 1);
+    if (i === 0) k = Math.max(k, loadK);
+
+    if (Math.abs(op - band.__op) > 0.004){
+      band.__op = op;
+      band.style.opacity = op.toFixed(3);
+    }
+    if (Math.abs(k - band.__k) > 0.008){
+      band.__k = k;
+      band.style.setProperty('--k', k.toFixed(3));
+    }
+  }
+}
+
+/* ============================================================
+   Gated seeks, deadlock safe
+   ============================================================ */
+var seekBusy = false, pendingTime = null;
+
+function requestSeek(t){
+  if (!video.duration || isNaN(video.duration)) return;
+  if (seekBusy){ pendingTime = t; return; }
+  seekBusy = true;
+  try { video.currentTime = t; } catch(e){ seekBusy = false; }
+}
+video.addEventListener('seeked', function(){
+  seekBusy = false;
+  if (pendingTime !== null){
+    var t = pendingTime; pendingTime = null; requestSeek(t);
+  }
+});
+video.addEventListener('error', function(){   /* the deadlock escape */
+  seekBusy = false; pendingTime = null; failVideo();
+});
+
+/* ============================================================
+   The rAF loop that rests
+   ============================================================ */
+var target = 0, shown = 0, rafId = null, lastTick = 0, heroOnScreen = true;
+
+function heroProgress(){
+  var r = heroEl.getBoundingClientRect();
+  var range = heroEl.offsetHeight - window.innerHeight;
+  if (range <= 0) return 0;
+  return clamp(-r.top / range, 0, 1);
+}
+
+function tick(now){
+  var dt = Math.min(100, now - (lastTick || now));
+  lastTick = now;
+  var k = 0.16;
+  shown += (target - shown) * (1 - Math.pow(1 - k, dt / 16.667));
+  if (Math.abs(target - shown) < 0.0005){
+    shown = target; rafId = null; lastTick = 0;
+  } else {
+    rafId = requestAnimationFrame(tick);
+  }
+  if (video.duration) requestSeek(shown * video.duration);
+  updateCaptions(shown);
+}
+
+function onScroll(){
+  target = heroProgress();
+  if (rafId === null && heroOnScreen) rafId = requestAnimationFrame(tick);
+}
+
+if ('IntersectionObserver' in window){
+  new IntersectionObserver(function(entries){
+    heroOnScreen = entries[0].isIntersecting;
+    if (heroOnScreen && rafId === null && scrubOn) rafId = requestAnimationFrame(tick);
+  }, {rootMargin:'10px'}).observe(heroEl);
+}
+
+/* ============================================================
+   Poster first, then the streamed Blob behind an honest ring
+   ============================================================ */
+var heroInit = false, started = false;
+
+function startBlobFetch(){
+  if (started) return;
+  started = true;
+  loadHeroBlob().catch(failVideo);
+}
+
+function initHeroOnce(){
+  if (heroInit) return;
+  heroInit = true;
+  poster.style.backgroundImage = "url('" + POSTER_URL + "')";
+  var img = new Image();
+  img.onload = startBlobFetch;
+  img.onerror = startBlobFetch;
+  img.src = POSTER_URL;
+  setTimeout(startBlobFetch, 4000);
+}
+
+function loadHeroBlob(){
+  var ctrl = new AbortController();
+  var watchdog = setTimeout(function(){ ctrl.abort(); }, 20000);
+
+  return fetch(VIDEO_URL, {priority:'low', signal: ctrl.signal}).then(function(res){
+    if (!res.ok) throw new Error('http ' + res.status);
+    var total = Number(res.headers.get('Content-Length')) || VIDEO_BYTES;
+    if (!res.body) return res.blob().then(function(b){ clearTimeout(watchdog); return b; });
+
+    var reader = res.body.getReader();
+    var chunks = [], got = 0, lastRing = 0;
+
+    return (function pump(){
+      return reader.read().then(function(r){
+        if (r.done) return new Blob(chunks);
+        clearTimeout(watchdog);
+        watchdog = setTimeout(function(){ ctrl.abort(); }, 20000);
+        chunks.push(r.value);
+        got += r.value.length;
+        var frac = Math.min(1, got / total);
+        var now = performance.now();
+        if (now - lastRing > 100 || frac === 1){
+          lastRing = now;
+          ring.style.setProperty('--ld', Math.round(126 * (1 - frac)));
+        }
+        return pump();
+      });
+    })();
+  }).then(function(blob){
+    clearTimeout(watchdog);
+    ring.style.setProperty('--ld', 0);
+    ring.style.opacity = 0;
+    video.src = URL.createObjectURL(blob);
+    video.load();
+    video.addEventListener('canplay', function(){
+      requestSeek(heroProgress() * video.duration);
+      stage.classList.add('video-ready');
+      onScroll();
+    }, {once:true});
+  });
+}
+
+function makeScrollChevron(){
+  var s = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  s.setAttribute('class','chev'); s.setAttribute('viewBox','0 0 24 24');
+  s.setAttribute('width','26'); s.setAttribute('height','26');
+  s.setAttribute('aria-hidden','true');
+  var p = document.createElementNS('http://www.w3.org/2000/svg','path');
+  p.setAttribute('d','M5 9l7 7 7-7');
+  p.setAttribute('fill','none'); p.setAttribute('stroke','currentColor');
+  p.setAttribute('stroke-width','2'); p.setAttribute('stroke-linecap','round');
+  s.appendChild(p);
+  return s;
+}
+var failed = false;
+function failVideo(){
+  if (failed) return;
+  failed = true;
+  if (ring && ring.parentNode) ring.replaceWith(makeScrollChevron());
+  stage.classList.add('video-failed');
+  video.style.display = 'none';   /* the page stays complete over the poster */
+}
+
+/* ============================================================
+   The five gates, decided live, not once at load
+   ============================================================ */
+var GATES = [
+  '(max-width: 720px)',
+  '(orientation: portrait) and (max-width: 1024px)',
+  '(orientation: portrait) and (pointer: coarse)',
+  '(orientation: landscape) and (pointer: coarse) and (max-height: 560px)',
+  '(prefers-reduced-motion: reduce)'
+];
+var scrubOn = false;
+
+function enableScrub(){
+  if (scrubOn) return;
+  scrubOn = true;
+  document.documentElement.classList.remove('static-hero');
+  initHeroOnce();
+  window.addEventListener('scroll', onScroll, {passive:true});
+  bandEls.forEach(function(b){ b.__op = -1; b.__k = -1; });
+  unpinFinalStates();
+  updateCaptions(heroProgress());
+  onScroll();
+}
+
+function disableScrub(){
+  if (!scrubOn) return;
+  scrubOn = false;
+  document.documentElement.classList.add('static-hero');
+  window.removeEventListener('scroll', onScroll);
+  if (rafId !== null){ cancelAnimationFrame(rafId); rafId = null; }
+}
+
+function applyHeroMode(){
+  var hit = false;
+  for (var i = 0; i < GATES.length; i++){ if (matchMedia(GATES[i]).matches){ hit = true; break; } }
+  if (hit) disableScrub(); else enableScrub();
+}
+
+var MQLS = GATES.map(function(q){ return matchMedia(q); });
+MQLS.forEach(function(m){
+  if (m.addEventListener) m.addEventListener('change', applyHeroMode);
+  else if (m.addListener) m.addListener(applyHeroMode);
+});
+
+/* ============================================================
+   Reduced motion, honoured live in BOTH directions
+   ============================================================ */
+function pinToFinalStates(){
+  document.documentElement.classList.add('pinned');
+  bandEls.forEach(function(b){
+    b.style.opacity = (b === bandEls[bandEls.length-1]) ? '1' : '0';
+    b.style.setProperty('--k','1');
+  });
+  document.querySelectorAll('.draw').forEach(function(el){ el.classList.add('drawn'); });
+  document.querySelectorAll('[data-count]').forEach(function(el){
+    el.textContent = el.getAttribute('data-count');
+  });
+  var hold = document.getElementById('holdSection');
+  if (hold) hold.classList.add('hold-complete');
+}
+function unpinFinalStates(){
+  document.documentElement.classList.remove('pinned');
+  bandEls.forEach(function(b){ b.style.opacity = ''; b.style.removeProperty('--k'); });
+  document.querySelectorAll('.draw.drawn').forEach(function(el){ el.classList.remove('drawn'); });
+  var hold = document.getElementById('holdSection');
+  if (hold && !hold.dataset.userCompleted) hold.classList.remove('hold-complete');
+}
+
+var rmq = matchMedia('(prefers-reduced-motion: reduce)');
+function onReducedChange(e){
+  if (e.matches) pinToFinalStates();
+  else applyHeroMode();
+}
+if (rmq.addEventListener) rmq.addEventListener('change', onReducedChange);
+else if (rmq.addListener) rmq.addListener(onReducedChange);
+
+/* ============================================================
+   Band one opens settled: a one-time load ramp that hands to scroll
+   ============================================================ */
+function runLoadRamp(){
+  if (rmq.matches){ loadK = 1; updateCaptions(heroProgress()); return; }
+  var t0 = null, DUR = 1100;
+  (function step(now){
+    if (t0 === null) t0 = now;
+    var e = Math.min(1, (now - t0) / DUR);
+    loadK = e * e * (3 - 2 * e);
+    updateCaptions(shown);
+    if (e < 1) requestAnimationFrame(step);
+  })(performance.now());
+}
+
+/* ============================================================
+   Whisper-level flour drift, mid-cycle at first paint
+   ============================================================ */
+(function motes(){
+  if (rmq.matches) return;
+  var host = document.getElementById('motes');
+  var r = rng(20260909);
+  var frag = document.createDocumentFragment();
+  for (var i = 0; i < 22; i++){
+    var d = document.createElement('div');
+    d.className = 'mote';
+    d.style.left = (r() * 100).toFixed(2) + 'vw';
+    d.style.animationDuration = (74 + r() * 42).toFixed(1) + 's';
+    d.style.animationDelay = '-' + (r() * 90).toFixed(1) + 's';
+    d.style.opacity = (0.35 + r() * 0.5).toFixed(2);
+    var s = (1.6 + r() * 2.6).toFixed(1);
+    d.style.width = s + 'px'; d.style.height = s + 'px';
+    frag.appendChild(d);
+  }
+  host.appendChild(frag);
+})();
+
+/* pause every animation on a hidden tab, pseudo-elements included */
+document.addEventListener('visibilitychange', function(){
+  document.body.classList.toggle('paused', document.hidden);
+});
+
+applyHeroMode();
+if (scrubOn) runLoadRamp(); else loadK = 1;
+
+})();
+</script>
+</body>
+</html>
