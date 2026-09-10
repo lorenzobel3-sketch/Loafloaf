@@ -24,8 +24,7 @@ below has to be true before it is public. Nothing here is optional.
         reserve button becomes "Reserve on WhatsApp" and the order arrives
         with the quantity, name, email and total already written out.
       - `INSTAGRAM_URL` the full address of the profile.
-      - `LOAF_PRICE` in dirhams. **AED 30 is a placeholder I chose, not
-        your price.** One number, used everywhere on the page.
+      - `LOAF_PRICE` in dirhams. Set to AED 35.
       - `STRIPE_LINKS` only when you want card payment. Leave empty and
         orders go by WhatsApp and are paid on collection.
 
@@ -34,26 +33,27 @@ below has to be true before it is public. Nothing here is optional.
       order the site takes opens a message to it. Replace it with the real
       number before anyone can reach the site, or orders go to a stranger.
 
-- [ ] **Fill in the two remaining TO FILL boxes**: the Sunday delivery
+- [ ] **Fill in the two remaining TO FILL boxes**: the weekend delivery
       window, and the trading details in the footer.
 
 - [ ] **Confirm every factual claim.** These were invented and read as
       statements the business is making:
-      - the price, currently a placeholder AED 30 a loaf
-      - the cost breakdown in "What it costs" (AED 3.50 flour, AED 0.20
-        water and salt, AED 26.30 time and oven), which I converted to keep
-        the proportions and which is still invented
+      - the cost breakdown in "What it costs" (AED 4.00 flour, AED 0.25
+        water and salt, AED 30.75 time and oven), scaled to your AED 35 and
+        still invented
       - "organic stoneground flour from a mill two counties over", which
         matters twice over because the headline says organic
       - the thirty-six hour ferment, which the whole page is built on
-      - baked Saturday night, delivered Sunday morning
-      - one bake a week
+      - baked overnight before each delivery morning, delivered Saturday
+        or Sunday
+      - two bakes a weekend, and whether that is really your routine
       - keeps four or five days
       - "Batch no. 41" in the hero
 
 - [x] **Delivery, not collection.** Free across Arabian Ranches, Dubai,
-      Sunday morning, no pick up. The site says this on the order step and
-      the WhatsApp order asks the customer for their address.
+      Saturday or Sunday morning, no pick up. The customer picks the
+      morning on the order form, and the WhatsApp order carries the day and
+      asks for their address.
 
 - [ ] **Fill in the footer.** Trading name, a way to reach you, and your
       company number if you are registered.
