@@ -29,10 +29,13 @@ below has to be true before it is public. Nothing here is optional.
       - `STRIPE_LINKS` only when you want card payment. Leave empty and
         orders go by WhatsApp and are paid on collection.
 
-- [ ] **Fill in every TO FILL box on the page.** They are styled to be
-      impossible to miss: where to collect, when, and the trading details
-      in the footer. A customer who reserves a loaf and cannot find out
-      where to come has been sold nothing.
+- [ ] **The WhatsApp number on the site is a placeholder.**
+      `971501234567` is a dummy, the one used to test the ordering. Every
+      order the site takes opens a message to it. Replace it with the real
+      number before anyone can reach the site, or orders go to a stranger.
+
+- [ ] **Fill in the two remaining TO FILL boxes**: the Sunday delivery
+      window, and the trading details in the footer.
 
 - [ ] **Confirm every factual claim.** These were invented and read as
       statements the business is making:
@@ -43,14 +46,14 @@ below has to be true before it is public. Nothing here is optional.
       - "organic stoneground flour from a mill two counties over", which
         matters twice over because the headline says organic
       - the thirty-six hour ferment, which the whole page is built on
-      - baked Saturday night, collected Sunday morning
+      - baked Saturday night, delivered Sunday morning
       - one bake a week
       - keeps four or five days
       - "Batch no. 41" in the hero
 
-- [ ] **Say where collection happens.** There is no address, opening time
-      or contact anywhere on the site. A customer who reserves a loaf
-      currently has no idea where to go.
+- [x] **Delivery, not collection.** Free across Arabian Ranches, Dubai,
+      Sunday morning, no pick up. The site says this on the order step and
+      the WhatsApp order asks the customer for their address.
 
 - [ ] **Fill in the footer.** Trading name, a way to reach you, and your
       company number if you are registered.

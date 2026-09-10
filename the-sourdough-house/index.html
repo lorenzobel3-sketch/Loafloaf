@@ -652,7 +652,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
     <div class="price-grid">
       <div class="pricecard rise">
         <p class="fig">AED 35</p>
-        <p class="per">One loaf, collected Sunday</p>
+        <p class="per">One loaf, delivered Sunday</p>
       </div>
       <ul class="breakdown rise">
         <li><span class="amt">AED 4.00</span>
@@ -718,8 +718,8 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
   <section class="slab" id="reserve">
     <p class="kick">This week's bake</p>
     <h2>Reserve this week's loaf.</h2>
-    <p class="lede">Saturday night's bake is small on purpose. Reserve yours and collect it
-      Sunday morning, still warm.</p>
+    <p class="lede">Saturday night's bake is small on purpose. Reserve yours and we bring it to
+      your door on Sunday morning, still warm. Delivery across Arabian Ranches is free.</p>
 
     <form class="form" id="reserveForm" novalidate>
       <div class="field">
@@ -748,25 +748,23 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
       <p class="note" id="payNote" hidden>Payment is handled by Stripe. Your card details are
         entered on their page and never touch this site.</p>
       <p class="note" id="demoNote">Card payment is not switched on yet. Reserve your loaf here
-        and pay when you collect.</p>
+        and pay the driver when it arrives.</p>
     </form>
 
     <div class="success" id="success" role="status" aria-live="polite">
       <p id="successLine">Reserved. We'll email you Friday night when the dough goes in.</p>
     </div>
 
-    <!-- COLLECTION. Replace every TO FILL below with the real thing.
-         A customer who has just reserved a loaf needs to know where to come
-         and when. Leaving these unfilled is the one thing that makes the
-         reservation useless. -->
     <div class="collect">
       <div class="collect-block">
-        <h3>Where to collect</h3>
-        <p class="tofill">TO FILL: the address, or the market and stall</p>
+        <h3>Delivery</h3>
+        <p>Free to your door anywhere in Arabian Ranches, Dubai. We do not offer collection,
+          so every loaf is brought to you.</p>
       </div>
       <div class="collect-block">
         <h3>When</h3>
-        <p class="tofill">TO FILL: Sunday, and the hours</p>
+        <p>Sunday morning, the morning after the bake.</p>
+        <p class="tofill">TO FILL: the delivery window, for example between 8 and 11</p>
       </div>
       <div class="collect-block">
         <h3>Any questions</h3>
@@ -849,7 +847,7 @@ var VIDEO_BYTES = 4737233;
 
    Leave them empty and the site takes reservations only: the
    button shows a confirmation and no money moves, so customers
-   pay at the counter on collection.
+   pay the driver on delivery.
    ============================================================ */
 var STRIPE_LINKS = {
   1: '',   /* one loaf   */
@@ -1517,16 +1515,17 @@ if (io){
     var wa = WHATSAPP_NUMBER.replace(/[^0-9]/g, '');
     if (wa){
       var msg = 'Hello, I would like to reserve ' + n + (n === 1 ? ' loaf' : ' loaves') +
-                ' for Sunday.\n\nName: ' + name.value.trim() +
+                ' for Sunday delivery.\n\nName: ' + name.value.trim() +
                 '\nEmail: ' + email.value.trim() +
-                '\nTotal: ' + money(n * LOAF_PRICE);
+                '\nTotal: ' + money(n * LOAF_PRICE) +
+                '\n\nMy address in Arabian Ranches: ';
       if (btn){ btn.disabled = true; btn.textContent = 'Opening WhatsApp'; }
       window.open('https://wa.me/' + wa + '?text=' + encodeURIComponent(msg), '_blank', 'noopener');
       f.classList.add('gone');
       var waLine = document.getElementById('successLine');
       if (waLine){
-        waLine.textContent = 'Your order is open in WhatsApp. Send the message and we will ' +
-          'confirm your ' + (n === 1 ? 'loaf' : 'loaves') + ' for Sunday.';
+        waLine.textContent = 'Your order is open in WhatsApp. Add your address, send it, and we ' +
+          'will confirm your ' + (n === 1 ? 'loaf' : 'loaves') + ' for Sunday morning.';
       }
       ok.classList.add('on');
       ok.focus && ok.focus();
