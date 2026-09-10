@@ -16,16 +16,30 @@ below has to be true before it is public. Nothing here is optional.
       the same window at the same time of day so they match. Once they are
       in, narrow the footer line so it refers to the film alone.
 
-- [ ] **Fill in every TO FILL box.** They are styled to be impossible to
-      miss: where to collect, when, how to ask a question, and the trading
-      details in the footer. A customer who reserves a loaf and cannot find
-      out where to come has been sold nothing.
+- [ ] **Fill in the settings at the top of the script in `index.html`.**
+      There are four, and they are the whole shop:
+
+      - `WHATSAPP_NUMBER` country code first, digits only, no plus, no
+        spaces. A Dubai mobile looks like `9715XXXXXXXX`. Once set, the
+        reserve button becomes "Reserve on WhatsApp" and the order arrives
+        with the quantity, name, email and total already written out.
+      - `INSTAGRAM_URL` the full address of the profile.
+      - `LOAF_PRICE` in dirhams. **AED 30 is a placeholder I chose, not
+        your price.** One number, used everywhere on the page.
+      - `STRIPE_LINKS` only when you want card payment. Leave empty and
+        orders go by WhatsApp and are paid on collection.
+
+- [ ] **Fill in every TO FILL box on the page.** They are styled to be
+      impossible to miss: where to collect, when, and the trading details
+      in the footer. A customer who reserves a loaf and cannot find out
+      where to come has been sold nothing.
 
 - [ ] **Confirm every factual claim.** These were invented and read as
       statements the business is making:
-      - the price, currently £6.50 a loaf
-      - the cost breakdown in "What it costs" (80p flour, 5p water and
-        salt, £5.65 time and oven)
+      - the price, currently a placeholder AED 30 a loaf
+      - the cost breakdown in "What it costs" (AED 3.50 flour, AED 0.20
+        water and salt, AED 26.30 time and oven), which I converted to keep
+        the proportions and which is still invented
       - "organic stoneground flour from a mill two counties over", which
         matters twice over because the headline says organic
       - the thirty-six hour ferment, which the whole page is built on
