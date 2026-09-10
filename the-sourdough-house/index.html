@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Sourdough House</title>
+<meta name="description" content="Organic sourdough made of three things: flour, water and salt. Baked overnight, at your door Saturday or Sunday.">
+<meta name="theme-color" content="#EDE6D8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23EDE6D8'/%3E%3Cpath d='M6 21C11 9 21 9 26 21' stroke='%237B3B1B' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+
+<!-- DEPLOY STEP: patch og:url and og:image with the live absolute URL before zipping -->
+<meta property="og:title" content="The Sourdough House">
+<meta property="og:description" content="One loaf. Baked overnight. At your door Saturday or Sunday.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="REPLACE_AT_DEPLOY">
+<meta property="og:image" content="REPLACE_AT_DEPLOY">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Karla:wght@400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   THE SOURDOUGH HOUSE
+   Palette sampled from the world of the footage. Cream is on the
+   banned AI-cliche list and the deviation is deliberate: cream,
+   linen and stoneware are this subject's own material world. It is
+   earned with tones taken from the footage itself, a burnt crust
+   ridge instead of terracotta as the accent, and no two adjacent
+   sections sharing a skeleton.
+   ============================================================ */
+:root{
+  --canvas:#EDE6D8;
+  --panel:#E3D9C6;
+  --accent:#7B3B1B;
+  --accent-hover:#94502A;
+  --accent-muted:rgba(123,59,27,.18);
+  --text-secondary:#675B4D;   /* 4.72:1 on the panel, 5.3:1 on the canvas */
+  --text-primary:#2A2018;
+
+  --display:'Fraunces',Georgia,'Times New Roman',serif;
+  --body:'Karla','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --mono:'DM Mono','SFMono-Regular',Consolas,monospace;
+
+  /* The three-layer shadow, inverted. The approved footage is a bright
+     sunlit cream room, so light type could not reach the 3.5:1 floor over
+     it without a scrim heavy enough to flatten the shot. Dark roast brown
+     on a warm cream lift is both legible and more on-brand. */
+  --tshadow:0 1px 2px rgba(255,252,245,.95),0 2px 10px rgba(255,252,245,.85),0 8px 40px rgba(255,252,245,.7);
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --ease-soft:cubic-bezier(.4,0,.2,1);
+
+  /* 400vh is the skill's proven starting point for a single 6s shot, but the
+     flick test rejected it: with four bands the scroll range gave each beat
+     only 48 to 78vh, against the 80 to 130vh plateau the standard requires,
+     and band one was skippable at 360px steps. Deviation said out loud.
+     At 560vh the scroll range is 460vh, so every beat gets 94 to 110vh. */
+  --hero-vh:560;
+}
+
+*{box-sizing:border-box}
+html,body{overflow-x:hidden;overflow-x:clip}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--canvas);
+  color:var(--text-primary);
+  font-family:var(--body);
+  font-weight:400;
+  font-size:clamp(16px,1.05vw + 12px,19px);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.08;margin:0;letter-spacing:-.015em}
+p{margin:0}
+a{color:inherit}
+img{max-width:100%;display:block}
+
+.skip{position:absolute;left:-9999px;top:0;background:var(--accent);color:#fff;padding:.7em 1.1em;z-index:200;border-radius:0 0 8px 0}
+.skip:focus{left:0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+
+/* ---------- the fixed background environment layer ---------- */
+.env{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(120% 80% at 12% 0%,rgba(255,246,226,.75) 0%,rgba(255,246,226,0) 55%),
+    radial-gradient(100% 70% at 90% 100%,rgba(123,59,27,.07) 0%,rgba(123,59,27,0) 60%);
+  animation:envdrift 90s var(--ease-soft) -30s infinite alternate}
+@keyframes envdrift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(0,-1.5%,0) scale(1.04)}}
+
+/* whisper-level flour drift */
+.motes{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.5}
+.mote{position:absolute;width:3px;height:3px;border-radius:50%;background:rgba(255,252,244,.9);
+  filter:blur(.4px);animation:mote 90s linear infinite}
+@keyframes mote{
+  0%{transform:translate3d(0,110vh,0);opacity:0}
+  8%{opacity:.7}
+  92%{opacity:.5}
+  100%{transform:translate3d(3vw,-12vh,0);opacity:0}
+}
+
+.wrap{position:relative;z-index:2}
+main{display:block}
+
+/* ============================================================
+   THE HERO
+   ============================================================ */
+#hero{position:relative;height:calc(var(--hero-vh) * 1vh)}
+.stage{position:sticky;top:0;height:100vh;overflow:hidden;background:#2A2018}
+
+.poster{position:absolute;inset:0;background-size:cover;background-position:center;
+  transition:opacity .8s var(--ease-soft)}
+#heroVideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  opacity:0;transition:opacity .7s var(--ease-soft);will-change:transform;transform:translateZ(0)}
+.stage.video-ready #heroVideo{opacity:1}
+.stage.video-ready .poster{opacity:0}
+
+/* 1. the global base scrim, always on */
+.scrim{position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(240,233,220,.52) 0%,rgba(240,233,220,.20) 46%,rgba(40,30,22,.10) 78%,rgba(40,30,22,.30) 100%)}
+
+/* the honest loading ring */
+.ring{position:absolute;right:28px;bottom:26px;width:46px;height:46px;color:rgba(42,32,24,.72);
+  transform:rotate(-90deg);z-index:6}
+.ring circle{transition:stroke-dashoffset .18s linear}
+.chev{position:absolute;right:30px;bottom:28px;z-index:6;color:rgba(42,32,24,.72);
+  animation:chev 2.6s var(--ease-soft) infinite}
+@keyframes chev{0%,100%{transform:translateY(0);opacity:.55}50%{transform:translateY(7px);opacity:1}}
+
+/* ---------- caption bands ---------- */
+.bands{position:absolute;inset:0;z-index:5}
+.band{position:absolute;left:0;right:0;opacity:0;pointer-events:none;
+  color:var(--text-primary);text-shadow:var(--tshadow);padding:0 6vw}
+.band.live{pointer-events:auto}
+/* 2. the per-band scrim, rides the band opacity and deepens with --k */
+.band::before{content:"";position:absolute;inset:-8% -5%;pointer-events:none;z-index:-1;
+  opacity:calc(.25 + .75*var(--k,1));
+  background:radial-gradient(ellipse 78% 66% at 42% 50%,rgba(246,240,228,.94) 0%,rgba(246,240,228,.78) 44%,rgba(246,240,228,0) 78%)}
+
+/* bands 1 to 3 sit in the upper two thirds, clear of the action lane */
+.band-a,.band-b,.band-c{top:15vh}
+.band-a .line,.band-b .line,.band-c .line{
+  font-family:var(--display);font-weight:600;
+  font-size:clamp(2.1rem,6.4vw,5.2rem);line-height:1.04;max-width:17ch}
+.band-c::before{background:radial-gradient(ellipse 78% 66% at 42% 50%,rgba(246,240,228,.95) 0%,rgba(246,240,228,.82) 44%,rgba(246,240,228,0) 78%)}
+
+/* the settle band sits above the loaf, which lands left of centre */
+.band-d{top:11vh}
+.band-d .kicker{font-family:var(--mono);font-size:.76rem;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:1.1rem}
+.band-d h1{font-size:clamp(1.9rem,5.1vw,4.1rem);letter-spacing:.005em;font-weight:700;max-width:15ch}
+.band-d .sub{font-size:clamp(1rem,1.5vw,1.22rem);margin-top:1.1rem;max-width:34ch;
+  color:var(--text-secondary)}
+.band-d .cta-row{margin-top:1.8rem;display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
+
+/* the signature rule under the settle headline */
+.score-rule{display:block;width:min(30ch,62vw);height:22px;margin-top:1.2rem;overflow:visible}
+.score-rule path{fill:none;stroke:var(--accent);stroke-width:3.4;stroke-linecap:round;
+  filter:drop-shadow(0 2px 8px rgba(5,5,10,.5))}
+
+/* word and character split spans */
+.w{display:inline-block;white-space:pre}
+.c{display:inline-block;will-change:transform,opacity}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* entrance (f) drift-down, band 1: echoes the fall through the air */
+.band-a .w{--kc:clamp(0,(var(--k,0) - var(--th,0))*2.8,1);opacity:var(--kc);
+  transform:translateY(calc((1 - var(--kc)) * -26px))}
+/* entrance (a) scatter, band 2: echoes flour dust settling */
+.band-b .c{--kc:clamp(0,(var(--k,0) - var(--th,0))*2.6,1);opacity:var(--kc);
+  transform:translate(calc((1 - var(--kc))*var(--jx,0px)),calc((1 - var(--kc))*var(--jy,0px)))
+            rotate(calc((1 - var(--kc))*var(--jr,0deg)))}
+/* entrance (c) blur-to-sharp, band 3: echoes focus arriving on the loaf */
+.band-c .soft,.band-c .sharp{grid-area:1/1}
+.band-c .stack{display:grid}
+.band-c .soft{filter:blur(11px);opacity:calc(1 - var(--k,0))}
+.band-c .sharp{opacity:var(--k,0)}
+/* entrance (e) word-by-word rise into a staged settle, band 4 */
+.band-d h1 .w{--kc:clamp(0,(var(--k,0) - var(--th,0))*3,1);opacity:var(--kc);
+  transform:translateY(calc((1 - var(--kc)) * 30px))}
+.band-d .score-rule{opacity:clamp(0,(var(--k,0) - .52)*4,1)}
+.band-d .sub{--ks:clamp(0,(var(--k,0) - .66)*4,1);opacity:var(--ks);
+  transform:translateY(calc((1 - var(--ks)) * 14px))}
+.band-d .cta-row{--kb:clamp(0,(var(--k,0) - .78)*5,1);opacity:var(--kb);
+  transform:translateY(calc((1 - var(--kb)) * 14px))}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-block;background:var(--accent);color:#FCF7EE;text-decoration:none;
+  font-family:var(--body);font-weight:500;font-size:1rem;letter-spacing:.012em;
+  padding:.92em 1.7em;border-radius:2px;border:1px solid transparent;cursor:pointer;
+  transition:background .34s var(--ease),transform .34s var(--ease),box-shadow .34s var(--ease);
+  box-shadow:0 2px 0 rgba(42,32,24,.16)}
+.btn:hover{background:var(--accent-hover);transform:translateY(-2px);box-shadow:0 8px 22px rgba(123,59,27,.26)}
+.band .btn{text-shadow:none}
+.btn-quiet{background:transparent;color:#FBF6EC;border-color:rgba(251,246,236,.5);box-shadow:none}
+.btn-quiet:hover{background:rgba(251,246,236,.12);border-color:rgba(251,246,236,.85)}
+@media (pointer:coarse){
+  .btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+  .qa summary{min-height:44px;align-items:center}
+  .holdbtn{min-height:44px}
+  nav.bar .links a{min-height:44px;display:inline-flex;align-items:center}
+}
+
+/* ---------- the static hero, for the five gates ---------- */
+#staticHero{display:none;position:relative;min-height:100svh;overflow:hidden;background:#2A2018}
+#staticHero .shot{position:absolute;inset:0;background-size:cover;background-position:52% 62%}
+#staticHero .scrim{background:linear-gradient(180deg,rgba(240,233,220,.30) 0%,rgba(246,240,228,.55) 40%,rgba(246,240,228,.93) 72%,rgba(246,240,228,.98) 100%)}
+#staticHero .inner{position:relative;z-index:3;min-height:100svh;display:flex;flex-direction:column;
+  justify-content:flex-end;padding:12vh 7vw 9vh;color:var(--text-primary);text-shadow:var(--tshadow)}
+#staticHero h1{font-size:clamp(2rem,8.4vw,3.4rem);font-weight:700;max-width:14ch}
+#staticHero .sub{margin-top:1.1rem;font-size:clamp(1rem,4vw,1.15rem);max-width:30ch;color:var(--text-secondary)}
+#staticHero .cta-row{margin-top:1.9rem}
+html.static-hero #hero{display:none}
+html.static-hero #staticHero{display:block}
+
+/* ============================================================
+   BELOW THE FOLD
+   No two adjacent sections share a skeleton.
+   ============================================================ */
+section.slab{position:relative;padding:clamp(5rem,11vh,9rem) 6vw}
+.lede{font-size:clamp(1.05rem,1.5vw,1.24rem);color:var(--text-secondary);max-width:56ch}
+h2{font-size:clamp(1.9rem,4.3vw,3.15rem);max-width:19ch}
+h3{font-size:clamp(1.15rem,1.7vw,1.42rem);font-weight:600}
+.kick{font-family:var(--mono);font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:1.1rem}
+
+/* the signature: the score, drawing itself left to right on scroll */
+.divider{display:block;width:100%;height:34px;overflow:visible;margin:0}
+.divider path{fill:none;stroke:var(--accent-muted);stroke-width:2.4;stroke-linecap:round;
+  stroke-dasharray:1000;stroke-dashoffset:1000;transition:stroke-dashoffset 1.5s var(--ease)}
+.divider.drawn path{stroke-dashoffset:0}
+
+/* entrances */
+.rise{opacity:0;transform:translateY(26px);
+  transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.rise.in{opacity:1;transform:none}
+.stagger > *{opacity:0;transform:translateY(22px);
+  transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.stagger.in > *{opacity:1;transform:none}
+.stagger.in > *:nth-child(1){transition-delay:.06s}
+.stagger.in > *:nth-child(2){transition-delay:.19s}
+.stagger.in > *:nth-child(3){transition-delay:.32s}
+/* retire the delays once the entrance is done, at matching specificity */
+.stagger.done > *:nth-child(1),
+.stagger.done > *:nth-child(2),
+.stagger.done > *:nth-child(3){transition-delay:0s !important}
+
+/* ---- 1. The label test: split, no kicker ---- */
+#label{background:var(--panel)}
+.split{display:grid;gap:clamp(2rem,5vw,4.5rem);grid-template-columns:1fr;align-items:start}
+@media (min-width:900px){.split{grid-template-columns:1fr 1fr}}
+.lists{display:grid;gap:1.4rem;grid-template-columns:1fr 1fr;margin-top:2.4rem}
+.list{background:var(--canvas);padding:1.6rem 1.5rem;border-radius:3px;
+  border:1px solid rgba(42,32,24,.1)}
+.list.ours{border-color:var(--accent);box-shadow:0 10px 30px rgba(123,59,27,.08)}
+.list h3{font-size:1rem;margin-bottom:1rem}
+.list ul{list-style:none;margin:0;padding:0;font-family:var(--mono);font-size:.83rem;
+  color:var(--text-secondary);line-height:2.05}
+.list.ours ul{color:var(--text-primary)}
+.list .count{font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;
+  margin-top:1.1rem;padding-top:.9rem;border-top:1px solid rgba(42,32,24,.12);color:var(--accent)}
+
+/* ---- 2. How the week goes: horizontal timeline on the score curve ---- */
+#week{overflow:hidden}
+.week-track{position:relative;margin-top:3rem}
+.week-curve{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.week-curve path{fill:none;stroke:var(--accent-muted);stroke-width:2.4;stroke-linecap:round;
+  stroke-dasharray:1200;stroke-dashoffset:1200;transition:stroke-dashoffset 1.8s var(--ease)}
+.week-curve.drawn path{stroke-dashoffset:0}
+.steps{display:grid;gap:2.2rem;grid-template-columns:1fr;position:relative;z-index:2}
+@media (min-width:820px){.steps{grid-template-columns:repeat(3,1fr);gap:2.6rem}}
+.step figure{margin:0}
+.step .shot{aspect-ratio:4/3;background:var(--panel) center/cover no-repeat;border-radius:3px;
+  filter:saturate(.96)}
+.step .no{font-family:var(--mono);font-size:.72rem;letter-spacing:.2em;color:var(--accent);
+  margin:1.1rem 0 .5rem}
+.step p{color:var(--text-secondary);margin-top:.5rem;max-width:34ch}
+@media (min-width:820px){.step:nth-child(2){transform:translateY(2.6rem)}
+  .step:nth-child(3){transform:translateY(.9rem)}}
+
+/* ---- 3. Still warm: the interactive moment ---- */
+#holdSection{background:var(--text-primary);color:#F3EADA;text-align:center;overflow:hidden}
+#holdSection h2{color:#FBF6EC;margin:0 auto;text-align:center}
+#holdSection .lede{color:rgba(243,234,218,.72);margin:1.2rem auto 0;text-align:center}
+.clockwrap{position:relative;width:min(320px,74vw);margin:3.2rem auto 0}
+.clock{display:block;width:100%;height:auto;overflow:visible}
+.clock .track{fill:none;stroke:rgba(243,234,218,.16);stroke-width:5}
+.clock .arc{fill:none;stroke:var(--accent-hover);stroke-width:5;stroke-linecap:round;
+  stroke-dasharray:534;stroke-dashoffset:calc(534 - 534 * var(--hp,0))}
+.clock .crumb{fill:rgba(243,234,218,.1);r:calc(30px + 34px * var(--hp,0))}
+.readout{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;pointer-events:none}
+.readout .hrs{font-family:var(--mono);font-size:clamp(2.1rem,6vw,2.9rem);letter-spacing:.02em}
+.readout .unit{font-family:var(--mono);font-size:clamp(.8rem,1.5vw,.95rem);letter-spacing:.2em;
+  text-transform:uppercase;color:rgba(243,234,218,.8);text-align:center;padding:0 1.5rem}
+.holdbtn{margin-top:2.2rem;background:transparent;color:#F3EADA;border:1px solid rgba(243,234,218,.42);
+  font-family:var(--mono);font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;
+  padding:1em 2em;border-radius:2px;cursor:pointer;touch-action:none;
+  transition:background .3s var(--ease),border-color .3s var(--ease)}
+.holdbtn:hover{background:rgba(243,234,218,.1);border-color:rgba(243,234,218,.8)}
+.proofs{list-style:none;padding:0;margin:2.8rem auto 0;max-width:44ch;display:grid;gap:.9rem;
+  text-align:left}
+.proofs li{opacity:.18;transform:translateY(6px);
+  transition:opacity .7s var(--ease),transform .7s var(--ease);
+  font-size:.98rem;padding-left:1.6rem;position:relative}
+.proofs li::before{content:"";position:absolute;left:0;top:.62em;width:.7rem;height:2px;
+  background:var(--accent-hover);border-radius:2px}
+#holdSection.hold-complete .proofs li{opacity:1;transform:none}
+#holdSection.hold-complete .proofs li:nth-child(2){transition-delay:.22s}
+#holdSection.hold-complete .proofs li:nth-child(3){transition-delay:.44s}
+
+/* ---- 4. What it costs: an offset price block ---- */
+.price-grid{display:grid;gap:clamp(2rem,4vw,3.4rem);grid-template-columns:1fr;align-items:center;
+  margin-top:2.8rem}
+@media (min-width:900px){.price-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)}}
+.pricecard{background:var(--panel);padding:2.4rem 2.2rem;border-radius:3px;
+  border:1px solid rgba(42,32,24,.1);position:relative;overflow:hidden}
+.pricecard .fig{font-family:var(--display);font-size:clamp(3rem,7vw,4.4rem);font-weight:700;
+  line-height:1;color:var(--accent)}
+.pricecard .per{font-family:var(--mono);font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--text-secondary);margin-top:.9rem}
+.breakdown{list-style:none;padding:0;margin:0;display:grid;gap:1.15rem}
+.breakdown li{display:grid;grid-template-columns:auto 1fr;gap:1rem;align-items:baseline;
+  padding-bottom:1.15rem;border-bottom:1px solid rgba(42,32,24,.1)}
+.breakdown li:last-child{border-bottom:0;padding-bottom:0}
+.breakdown .amt{font-family:var(--mono);font-size:.85rem;color:var(--accent);white-space:nowrap}
+.breakdown p{color:var(--text-secondary);font-size:.97rem;max-width:44ch}
+
+/* ---- 5. FAQ: a quiet single column, no cards ---- */
+#faq{background:var(--panel)}
+.qa{max-width:70ch;margin-top:2.4rem;display:grid;gap:0}
+.qa details{border-bottom:1px solid rgba(42,32,24,.14);padding:1.4rem 0}
+.qa summary{cursor:pointer;font-family:var(--display);font-weight:600;font-size:clamp(1.05rem,1.8vw,1.3rem);
+  list-style:none;display:flex;gap:1rem;align-items:baseline;transition:color .3s var(--ease)}
+.qa summary::-webkit-details-marker{display:none}
+.qa summary::after{content:"+";margin-left:auto;font-family:var(--mono);color:var(--accent);
+  transition:transform .4s var(--ease);font-size:1.1rem}
+.qa details[open] summary::after{transform:rotate(45deg)}
+.qa summary:hover{color:var(--accent)}
+.qa .ans{color:var(--text-secondary);margin-top:.95rem;max-width:62ch}
+
+/* ---- 6. Testimonials: offset quote rows, not a card grid ---- */
+.quotes{display:grid;gap:2.6rem;margin-top:3rem}
+@media (min-width:860px){.quotes{grid-template-columns:1fr 1fr;gap:3.2rem 4rem}
+  .quotes blockquote:nth-child(even){transform:translateY(2.2rem)}}
+.quotes blockquote{margin:0;position:relative;padding-left:1.6rem}
+.quotes blockquote::before{content:"";position:absolute;left:0;top:.35em;bottom:.35em;width:2px;
+  background:var(--accent-muted)}
+.quotes p{font-family:var(--display);font-size:clamp(1.1rem,1.9vw,1.42rem);font-weight:400;
+  line-height:1.45;max-width:34ch}
+.quotes cite{display:block;margin-top:1.1rem;font-style:normal;font-family:var(--mono);
+  font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-secondary)}
+
+/* ---- 7. The form ---- */
+#reserve{background:var(--text-primary);color:#F3EADA;scroll-margin-top:0}
+#reserve h2{color:#FBF6EC}
+#reserve .lede{color:rgba(243,234,218,.72)}
+.form{margin-top:2.8rem;max-width:52ch;display:grid;gap:1.5rem}
+.field{display:grid;gap:.55rem}
+.field label{font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(243,234,218,.72)}
+.field input,.field select{background:rgba(243,234,218,.07);border:1px solid rgba(243,234,218,.26);
+  color:#F3EADA;font-family:var(--body);font-size:1rem;padding:.9em 1em;border-radius:2px;
+  transition:border-color .3s var(--ease),background .3s var(--ease)}
+.field input:hover,.field select:hover{border-color:rgba(243,234,218,.5)}
+.field input:focus-visible,.field select:focus-visible{outline:2px solid var(--accent-hover);
+  outline-offset:2px;background:rgba(243,234,218,.11)}
+.field select{appearance:none;cursor:pointer}
+.form .btn{justify-self:start;margin-top:.4rem}
+.form .note{font-size:.86rem;color:rgba(243,234,218,.55);max-width:46ch}
+.total{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;
+  padding:1.15rem 0 .3rem;border-top:1px solid rgba(243,234,218,.22);margin-top:.4rem}
+.total-line{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(243,234,218,.72)}
+.total-fig{font-family:var(--display);font-weight:700;font-size:clamp(1.5rem,3vw,1.9rem);
+  color:var(--accent-hover)}
+.success{display:none;background:rgba(148,80,42,.16);border:1px solid var(--accent-hover);
+  padding:1.5rem 1.4rem;border-radius:3px;max-width:52ch;margin-top:2.8rem}
+.success.on{display:block;animation:pop .7s var(--ease)}
+@keyframes pop{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.success p{color:#F3EADA}
+.form.gone{display:none}
+
+/* collection details, laid out as a counter card rather than a form */
+.collect{display:grid;gap:1.6rem;margin-top:3.4rem;padding-top:2.4rem;
+  border-top:1px solid rgba(243,234,218,.2)}
+@media (min-width:820px){.collect{grid-template-columns:repeat(3,1fr);gap:2.6rem}}
+.collect-block h3{font-size:1rem;color:#FBF6EC;margin-bottom:.6rem}
+.collect-block p{color:rgba(243,234,218,.72);font-size:.97rem;max-width:30ch}
+/* obviously unfinished, so it cannot ship unnoticed */
+.tofill{color:#FBF6EC !important;background:rgba(148,80,42,.34);
+  border:1px dashed var(--accent-hover);border-radius:3px;padding:.5em .7em;
+  font-family:var(--mono);font-size:.8rem;letter-spacing:.06em}
+.allergen{margin-top:2.6rem;padding-top:1.6rem;border-top:1px solid rgba(243,234,218,.2);
+  color:rgba(243,234,218,.72);font-size:.92rem;max-width:56ch}
+.allergen strong{color:#FBF6EC;font-weight:500}
+.btn-wa{background:#1F8F4E;display:inline-flex;align-items:center;gap:.6rem;margin-top:.2rem}
+.btn-wa:hover{background:#25A65C}
+.ig{display:inline-block;margin-top:.9rem;color:rgba(243,234,218,.72);font-size:.92rem;
+  text-decoration:none;border-bottom:1px solid var(--accent-hover);padding-bottom:2px;
+  transition:color .3s var(--ease)}
+.ig:hover{color:#FBF6EC}
+footer .social{display:flex;gap:1.4rem;margin-top:1.2rem;flex-wrap:wrap}
+footer .social a{color:rgba(243,234,218,.72);text-decoration:none;font-size:.9rem;
+  border-bottom:1px solid rgba(148,80,42,.7);padding-bottom:2px;transition:color .3s var(--ease)}
+footer .social a:hover{color:#FBF6EC}
+
+/* ---- 8. Footer ---- */
+footer{background:var(--text-primary);color:rgba(243,234,218,.6);padding:0 6vw 4.5rem;
+  font-size:.88rem}
+footer .rule{height:1px;background:rgba(243,234,218,.16);margin-bottom:2.6rem}
+footer .cols{display:grid;gap:1.6rem}
+@media (min-width:760px){footer .cols{grid-template-columns:1.4fr 1fr;align-items:end}}
+footer .mark{display:flex;align-items:center;gap:.8rem;color:#F3EADA;font-family:var(--display);
+  font-weight:600;font-size:1.05rem;letter-spacing:.01em}
+footer .mark svg{width:34px;height:16px;overflow:visible}
+footer .mark path{fill:none;stroke:var(--accent-hover);stroke-width:3;stroke-linecap:round}
+footer .disclose{max-width:58ch;line-height:1.65}
+
+/* ---- nav ---- */
+nav.bar{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;
+  gap:1rem;padding:.9rem 6vw;background:rgba(237,230,216,.82);backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(42,32,24,.08)}
+nav.bar .mark{display:flex;align-items:center;gap:.7rem;font-family:var(--display);font-weight:600;
+  font-size:.98rem;text-decoration:none;letter-spacing:.01em}
+nav.bar .mark svg{width:30px;height:14px;overflow:visible}
+nav.bar .mark path{fill:none;stroke:var(--accent);stroke-width:3;stroke-linecap:round}
+nav.bar .links{display:none;gap:2rem;font-size:.92rem}
+@media (min-width:780px){nav.bar .links{display:flex}}
+nav.bar .links a{text-decoration:none;color:var(--text-secondary);transition:color .3s var(--ease)}
+nav.bar .links a:hover{color:var(--accent)}
+nav.bar .btn{padding:.62em 1.15em;font-size:.9rem}
+
+body.paused *,body.paused *::before,body.paused *::after{animation-play-state:paused !important}
+
+/* The five static-hero gates. These five strings are repeated character for
+   character in the GATES array in JS. If one side changes, change both. */
+@media (max-width: 720px){#hero{display:none}#staticHero{display:block}}
+@media (orientation: portrait) and (max-width: 1024px){#hero{display:none}#staticHero{display:block}}
+@media (orientation: portrait) and (pointer: coarse){#hero{display:none}#staticHero{display:block}}
+@media (orientation: landscape) and (pointer: coarse) and (max-height: 560px){#hero{display:none}#staticHero{display:block}}
+@media (prefers-reduced-motion: reduce){#hero{display:none}#staticHero{display:block}}
+
+/* scrub-capable but short: keep the scrub, drop the overlays with no room */
+@media (max-height:560px){.ring,.chev{display:none}}
+
+/* ---------- reduced motion, honoured completely ---------- */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;transition-delay:0s !important;
+    scroll-behavior:auto !important}
+  .env,.motes{animation:none}
+  .mote{display:none}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the bread</a>
+
+<div class="env" aria-hidden="true"></div>
+<div class="motes" id="motes" aria-hidden="true"></div>
+
+<div class="wrap" id="top">
+
+<!-- ============ THE SCROLL HERO ============ -->
+<section id="hero" aria-label="The morning descent">
+  <div class="stage" id="stage">
+    <div class="poster" id="poster" aria-hidden="true"></div>
+    <video id="heroVideo" preload="none" muted playsinline aria-hidden="true" tabindex="-1"></video>
+    <div class="scrim" aria-hidden="true"></div>
+
+    <svg class="ring" id="ring" viewBox="0 0 48 48" aria-hidden="true">
+      <circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3"
+              stroke-dasharray="126" style="stroke-dashoffset:var(--ld,126)"/>
+    </svg>
+
+    <div class="bands" id="bands">
+      <div class="band band-a" data-a="0" data-b="0.205">
+        <div class="line" data-split="word">Three things go in.</div>
+      </div>
+      <div class="band band-b" data-a="0.24" data-b="0.465" data-spread="0.34">
+        <div class="line" data-split="char">Flour. Water. Salt.</div>
+      </div>
+      <div class="band band-c" data-a="0.50" data-b="0.725">
+        <div class="line stack">
+          <span class="soft" aria-hidden="true">Still warm at your door.</span>
+          <span class="sharp">Still warm at your door.</span>
+        </div>
+      </div>
+      <div class="band band-d live" data-a="0.76" data-b="1" data-ramp="0.036">
+        <p class="kicker">Batch no. 41</p>
+        <h1 data-split="word">Organic. The way it should be</h1>
+        <svg class="score-rule" viewBox="0 0 300 22" aria-hidden="true" preserveAspectRatio="none">
+          <path d="M4 16 C60 4, 118 3, 168 8 S262 18, 296 7"/>
+        </svg>
+        <p class="sub">One loaf. Baked overnight. At your door Saturday or Sunday.</p>
+        <div class="cta-row">
+          <a class="btn" href="#reserve">Reserve this week's loaf</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ THE STATIC HERO (phones, reduced motion) ============ -->
+<section id="staticHero" aria-label="The Sourdough House">
+  <div class="shot" id="staticShot" aria-hidden="true"></div>
+  <div class="scrim" aria-hidden="true"></div>
+  <div class="inner">
+    <h1>Organic. The way it should be</h1>
+    <p class="sub">One loaf. Baked overnight. At your door Saturday or Sunday.</p>
+    <div class="cta-row"><a class="btn" href="#reserve">Reserve this week's loaf</a></div>
+  </div>
+</section>
+
+<nav class="bar">
+  <a class="mark" href="#top">
+    <svg viewBox="0 0 300 22" aria-hidden="true" preserveAspectRatio="none">
+      <path d="M4 16 C60 4, 118 3, 168 8 S262 18, 296 7"/>
+    </svg>
+    The Sourdough House
+  </a>
+  <div class="links">
+    <a href="#label">The label test</a>
+    <a href="#week">The week</a>
+    <a href="#cost">What it costs</a>
+    <a href="#faq">Questions</a>
+  </div>
+  <a class="btn" href="#reserve">Reserve a loaf</a>
+</nav>
+
+<main id="main" tabindex="-1">
+
+  <!-- ============ 1. THE LABEL TEST ============ -->
+  <section class="slab" id="label">
+    <div class="split">
+      <div class="rise">
+        <h2>Read the back of the bag.</h2>
+        <p class="lede">Most loaves sold as sourdough are raised on commercial yeast and finished
+          the same day. The label is where it shows. Real sourdough needs three things. If the
+          list runs past three, something else is doing the lifting.</p>
+      </div>
+      <div class="rise">
+        <div class="lists">
+          <div class="list">
+            <h3>A supermarket loaf</h3>
+            <ul>
+              <li>Wheat flour</li><li>Water</li><li>Yeast</li><li>Salt</li>
+              <li>Vegetable oil</li><li>Sugar</li><li>Emulsifier</li>
+              <li>Vinegar</li><li>Enzymes</li><li>Flour treatment agent</li>
+              <li>Fermented wheat flour</li>
+            </ul>
+            <p class="count">Eleven things</p>
+          </div>
+          <div class="list ours">
+            <h3>Ours</h3>
+            <ul><li>Flour</li><li>Water</li><li>Salt</li></ul>
+            <p class="count">Three things</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <svg class="divider draw" viewBox="0 0 1000 34" aria-hidden="true" preserveAspectRatio="none">
+    <path d="M10 24 C220 6, 460 4, 640 14 S900 30, 990 10"/>
+  </svg>
+
+  <!-- ============ 2. HOW THE WEEK GOES ============ -->
+  <section class="slab" id="week">
+    <p class="kick rise">From starter to your door</p>
+    <h2 class="rise">One loaf takes most of a week.</h2>
+    <div class="week-track">
+      <svg class="week-curve draw" viewBox="0 0 1000 300" aria-hidden="true" preserveAspectRatio="none">
+        <path d="M40 90 C260 40, 420 210, 600 150 S880 60, 970 130"/>
+      </svg>
+      <div class="steps stagger">
+        <article class="step">
+          <figure>
+            <div class="shot" id="shot1" role="img" aria-label="Flour and water being fed to the starter"></div>
+            <figcaption>
+              <p class="no">01 / Day one</p>
+              <h3>Feed the starter</h3>
+              <p>Flour and water, twice a day, until it doubles and smells like green apples.
+                Nothing else goes in. Nothing else ever does.</p>
+            </figcaption>
+          </figure>
+        </article>
+        <article class="step">
+          <figure>
+            <div class="shot" id="shot2" role="img" aria-label="Dough being folded by hand in a bowl"></div>
+            <figcaption>
+              <p class="no">02 / Day two</p>
+              <h3>Fold, then wait</h3>
+              <p>Four folds across the afternoon, then the long cold rest. This is the part
+                nobody sells you, and the part you can taste.</p>
+            </figcaption>
+          </figure>
+        </article>
+        <article class="step">
+          <figure>
+            <div class="shot" id="shot3" role="img" aria-label="A scored loaf going into a hot oven"></div>
+            <figcaption>
+              <p class="no">03 / The night before</p>
+              <h3>Score and bake</h3>
+              <p>One cut with the blade, then heat and steam until the crust cracks and sings
+                on the rack. Yours the next morning.</p>
+            </figcaption>
+          </figure>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. STILL WARM: the interactive moment ============ -->
+  <section class="slab" id="holdSection">
+    <p class="kick">The whole idea</p>
+    <h2>Bread you tear the same morning.</h2>
+    <p class="lede">It goes in the oven overnight and reaches your door in the morning. Press and
+      hold to open the crumb. Let go early and it closes again, the way a loaf you left too long
+      never quite opens.</p>
+
+    <div class="clockwrap">
+      <svg class="clock" viewBox="0 0 200 200" aria-hidden="true">
+        <circle class="track" cx="100" cy="100" r="85"/>
+        <circle class="crumb" cx="100" cy="100"/>
+        <circle class="arc" cx="100" cy="100" r="85"
+                transform="rotate(-90 100 100)"/>
+      </svg>
+      <div class="readout">
+        <span class="unit" id="crumbLabel">Press and hold</span>
+      </div>
+    </div>
+
+    <button class="holdbtn" id="holdBtn" aria-describedby="holdHelp">Press and hold</button>
+    <p id="holdHelp" class="sr">Press and hold the button to open the crumb and reveal what
+      same-morning bread is like.</p>
+
+    <ul class="proofs">
+      <li>Baked overnight and at your door the same morning, not days later off a shelf.</li>
+      <li>Never part baked, never frozen, never brought back to life in a warmer.</li>
+      <li>Let it cool on a rack, then cut it while it is still warm. That is the whole point.</li>
+    </ul>
+  </section>
+
+  <!-- ============ 4. WHAT IT COSTS, AND WHY ============ -->
+  <section class="slab" id="cost">
+    <p class="kick rise">Where the money goes</p>
+    <h2 class="rise">Yes, it costs more than the supermarket.</h2>
+    <div class="price-grid">
+      <div class="pricecard rise">
+        <p class="fig">AED 35</p>
+        <p class="per">One loaf, delivered at the weekend</p>
+      </div>
+      <ul class="breakdown rise">
+        <li><span class="amt">AED 4.00</span>
+          <p>Certified organic stoneground flour. It costs about three times what white commodity
+            flour costs, and it is the only thing in here with a flavour.</p></li>
+        <li><span class="amt">AED 0.25</span>
+          <p>Water and salt. This is the honest part. They cost almost nothing.</p></li>
+        <li><span class="amt">AED 30.75</span>
+          <p>The overnight bake, a batch small enough that every loaf gets looked at, and getting
+            it to your door the same morning, free. This is the whole business, and it is why a
+            supermarket cannot do it cheaper.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <svg class="divider draw" viewBox="0 0 1000 34" aria-hidden="true" preserveAspectRatio="none">
+    <path d="M10 12 C220 28, 460 30, 640 18 S900 4, 990 22"/>
+  </svg>
+
+  <!-- ============ 5. QUESTIONS PEOPLE ACTUALLY ASK ============ -->
+  <section class="slab" id="faq">
+    <h2 class="rise">Questions people actually ask.</h2>
+    <div class="qa rise">
+      <details>
+        <summary>Why does it cost more than the one in the supermarket?</summary>
+        <p class="ans">Because of the flour, the size of the bake, and getting it to you on the
+          morning it came out of the oven. Supermarket bread is made in volume and then sits on a
+          shelf. This is baked overnight for the people who ordered it, and driven to the door.</p>
+      </details>
+      <details>
+        <summary>How do I tell real sourdough from the other kind?</summary>
+        <p class="ans">Read the ingredients. Four is right. If you see yeast, oil, sugar, vinegar
+          or enzymes, it was raised fast and given a sourdough label. The other tell is the price
+          of speed, a loaf that goes stale hard by Tuesday.</p>
+      </details>
+      <details>
+        <summary>Why only weekends?</summary>
+        <p class="ans">The bake runs overnight before each delivery morning, so the loaves come
+          out in the early hours and reach you while the crust is still loud. Two mornings, two
+          small batches. Baking through the week would mean cutting the rest short, and the rest
+          is the point.</p>
+      </details>
+      <details>
+        <summary>Is it gluten free?</summary>
+        <p class="ans">No. It is made of wheat flour and it contains gluten. The long ferment
+          changes the flavour and the texture, and we are not going to tell you it does anything
+          for your health.</p>
+      </details>
+      <details>
+        <summary>How long does it keep?</summary>
+        <p class="ans">Cut side down on a board, four or five days. It will not go stale the way
+          a fast loaf does. Day three toasted is the best it gets.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ 6. WHAT PEOPLE SAY ============ -->
+  <!-- REMOVED. These four quotes were written, not collected. They were
+       honest while the bakery was invented and the footer said so. On a real
+       trading site they would be fabricated reviews, which is both dishonest
+       and, in the UAE and most markets, unlawful. The section returns the moment
+       there are real words from real customers, with their permission. -->
+
+  <!-- ============ 7. THE FORM ============ -->
+  <section class="slab" id="reserve">
+    <p class="kick">This week's bake</p>
+    <h2>Reserve this week's loaf.</h2>
+    <p class="lede">Each bake is small on purpose. Reserve yours and we bring it to your door on
+      Saturday or Sunday morning, still warm. Delivery across Arabian Ranches is free.</p>
+
+    <form class="form" id="reserveForm" novalidate>
+      <div class="field">
+        <label for="name">Your name</label>
+        <input id="name" name="name" type="text" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label for="day">Which morning</label>
+        <select id="day" name="day">
+          <option value="Saturday">Saturday</option>
+          <option value="Sunday">Sunday</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="loaves">How many loaves</label>
+        <select id="loaves" name="loaves">
+          <option value="1">One</option>
+          <option value="2">Two</option>
+          <option value="3">Three</option>
+        </select>
+      </div>
+
+      <div class="total" aria-live="polite">
+        <span class="total-line"><span id="totalQty">1 loaf</span> at <span id="unitPrice">AED 35.00</span> each</span>
+        <span class="total-fig" id="totalFig">AED 35.00</span>
+      </div>
+
+      <button class="btn" type="submit">Reserve this week's loaf</button>
+      <p class="note" id="payNote" hidden>Payment is handled by Stripe. Your card details are
+        entered on their page and never touch this site.</p>
+      <p class="note" id="demoNote">Card payment is not switched on yet. Reserve your loaf here
+        and pay the driver when it arrives.</p>
+    </form>
+
+    <div class="success" id="success" role="status" aria-live="polite">
+      <p id="successLine">Reserved. We'll email you the night before, when the dough goes in.</p>
+    </div>
+
+    <div class="collect">
+      <div class="collect-block">
+        <h3>Delivery</h3>
+        <p>Free to your door anywhere in Arabian Ranches, Dubai. We do not offer collection,
+          so every loaf is brought to you.</p>
+      </div>
+      <div class="collect-block">
+        <h3>When</h3>
+        <p>Saturday or Sunday morning, whichever you pick. Always the morning after its
+          own bake.</p>
+        <p class="tofill">TO FILL: the delivery window, for example between 8 and 11</p>
+      </div>
+      <div class="collect-block">
+        <h3>Any questions</h3>
+        <p id="contactFallback" class="tofill">TO FILL: add your WhatsApp number in the settings
+          at the top of the file</p>
+        <a class="btn btn-wa" id="waLink" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true" width="17" height="17">
+            <path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 18.15h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.25-8.23a8.2 8.2 0 0 1 8.24 8.24c0 4.54-3.7 8.23-8.24 8.23Zm4.52-6.16c-.25-.13-1.47-.72-1.69-.8-.23-.09-.39-.13-.56.12-.16.25-.64.8-.79.97-.14.16-.29.18-.54.06-.25-.13-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.44-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.47c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.74 2.66 4.22 3.73.59.25 1.05.4 1.41.52.59.19 1.13.16 1.56.1.47-.07 1.47-.6 1.68-1.18.2-.58.2-1.08.14-1.18-.06-.11-.22-.17-.47-.29Z"/>
+          </svg>
+          Message us on WhatsApp
+        </a>
+        <a class="ig" id="igLink" hidden>Follow on Instagram</a>
+      </div>
+    </div>
+
+    <p class="allergen"><strong>Allergens.</strong> Our loaf is made with wheat flour and
+      contains gluten. It is baked in a kitchen that handles wheat.</p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="rule"></div>
+  <div class="cols">
+    <div>
+      <div class="mark">
+        <svg viewBox="0 0 300 22" aria-hidden="true" preserveAspectRatio="none">
+          <path d="M4 16 C60 4, 118 3, 168 8 S262 18, 296 7"/>
+        </svg>
+        The Sourdough House
+      </div>
+      <p class="disclose" style="margin-top:1rem">Baked in small batches, once a week.</p>
+      <div class="social" id="socialRow"></div>
+      <!-- TRADING DETAILS. Replace with the real ones before launch. -->
+      <p class="tofill" style="margin-top:1rem;display:inline-block">TO FILL: registered trading
+        name, contact email, and company number if you are registered</p>
+
+      <!-- The film at the top of this page is staying, and it is generated
+           rather than shot in the kitchen, so this line says so. When the
+           real photographs replace the three step pictures, narrow the
+           wording to the film alone. Do not delete it while any generated
+           imagery remains. -->
+      <p class="disclose" style="margin-top:.7rem">The film and photography on this page are
+        illustrative and were created digitally, not photographed in our kitchen.</p>
+    </div>
+    <p>Flour. Water. Salt. Baked overnight.</p>
+  </div>
+</footer>
+
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ============================================================
+   Assets. VIDEO_BYTES is the real encoded size and is the
+   fallback when the host omits Content-Length.
+   ============================================================ */
+var VIDEO_URL   = 'assets/hero-scrub.mp4';
+var POSTER_URL  = 'assets/hero-poster.jpg';
+var ENDING_URL  = 'assets/hero-ending.jpg';
+var VIDEO_BYTES = 4737233;
+
+/* Standalone fallback. The deployed site serves everything from assets/,
+   which is what these constants point at. But this one file is also handed
+   around on its own for review, where assets/ is not beside it, so each
+   asset has a remote twin to fall back to. Opened straight from disk the
+   Blob fetch cannot run at all (browsers block fetch on file:// URLs), so
+   the video falls back to a plain remote src, which still scrubs because
+   the host supports range requests. Nothing here affects a real deploy:
+   when assets/ is present it is always used. */
+/* ============================================================
+   PAYMENT. This is the only place to change.
+
+   Paste your Stripe payment links between the quotes to switch
+   the shop on. One link per quantity. If you only fill in the
+   first, it is used for every order and Stripe asks for the
+   quantity itself.
+
+   Leave them empty and the site takes reservations only: the
+   button shows a confirmation and no money moves, so customers
+   pay the driver on delivery.
+   ============================================================ */
+var STRIPE_LINKS = {
+  1: '',   /* one loaf   */
+  2: '',   /* two loaves */
+  3: ''    /* three loaves */
+};
+
+/* ------------------------------------------------------------
+   THE SHOP'S DETAILS. Fill these in.
+
+   WHATSAPP_NUMBER  Country code first, digits only, no plus and
+                    no spaces. A Dubai mobile looks like
+                    '9715XXXXXXXX'. Once set, reserving opens
+                    WhatsApp with the order already written out,
+                    so it reaches you without any Stripe account.
+
+   INSTAGRAM_URL    The full address of your profile.
+
+   LOAF_PRICE       In dirhams. Set to the real price, AED 35.
+   ------------------------------------------------------------ */
+var WHATSAPP_NUMBER = '971501234567';
+var INSTAGRAM_URL   = 'https://instagram.com/thesourdoughhouse';
+var LOAF_PRICE      = 35;
+var CURRENCY        = 'AED';
+
+function money(n){ return CURRENCY + ' ' + (Math.round(n * 100) / 100).toFixed(2); }
+
+var CDN = 'https://d2ol7oe51mr4n9.cloudfront.net/user_3J2dDycbIIzKPwTgbtXWRDYi82n/';
+var REMOTE = {
+  video : CDN + '9d053a14-fe9a-466f-9940-c9a56846ef3b.mp4',
+  poster: CDN + '010af5d2-5c1f-41e2-85da-d2061305b1ee.jpg',
+  ending: CDN + '26a14da8-3360-4f88-a6b4-53e5d4e0a9e7.jpg',
+  steps : [CDN + 'f6bab429-3233-4355-a71a-321a88ed95a8.jpg',
+           CDN + '58bc7b4f-5553-4a86-8373-816c6d87aef4.jpg',
+           CDN + '03a7b9db-22bc-4bf8-9d3f-3574ef0de87e.jpg']
+};
+var STANDALONE = location.protocol === 'file:';
+
+/* Paint a background image, trying the local file and falling back once. */
+function bg(el, local, remote){
+  if (!el) return;
+  if (STANDALONE){ el.style.backgroundImage = "url('" + remote + "')"; return; }
+  var probe = new Image();
+  probe.onload  = function(){ el.style.backgroundImage = "url('" + local + "')"; };
+  probe.onerror = function(){ el.style.backgroundImage = "url('" + remote + "')"; };
+  probe.src = local;
+}
+
+var stage   = document.getElementById('stage');
+var video   = document.getElementById('heroVideo');
+var poster  = document.getElementById('poster');
+var ring    = document.getElementById('ring');
+var heroEl  = document.getElementById('hero');
+var bandEls = [].slice.call(document.querySelectorAll('.band'));
+
+bg(document.getElementById('staticShot'), ENDING_URL, REMOTE.ending);
+
+/* ============================================================
+   Seeded split, done once at load, so the scatter is identical
+   on every visit.
+   ============================================================ */
+function rng(seed){
+  var s = seed >>> 0;
+  return function(){ s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
+}
+
+function splitText(el, mode, spread){
+  var text = el.textContent;
+  var rand = rng(text.length * 7919 + mode.length);
+  var srOnly = document.createElement('span');
+  srOnly.className = 'sr';
+  srOnly.textContent = text;
+  var visual = document.createElement('span');
+  visual.setAttribute('aria-hidden','true');
+
+  var words = text.split(' ');
+  var total = text.replace(/ /g,'').length;
+  var charIndex = 0;
+
+  words.forEach(function(word, wi){
+    var w = document.createElement('span');
+    w.className = 'w';
+    if (mode === 'word'){
+      w.style.setProperty('--th', (wi / Math.max(1, words.length) * 0.55).toFixed(3));
+    }
+    for (var i = 0; i < word.length; i++){
+      var c = document.createElement('span');
+      c.className = 'c';
+      c.textContent = word[i];
+      if (mode === 'char'){
+        var th = (charIndex / Math.max(1,total)) * (spread || 0.34) + rand() * 0.06;
+        c.style.setProperty('--th', th.toFixed(3));
+        c.style.setProperty('--jx', ((rand()*2-1)*46).toFixed(1) + 'px');
+        c.style.setProperty('--jy', ((rand()*2-1)*34).toFixed(1) + 'px');
+        c.style.setProperty('--jr', ((rand()*2-1)*16).toFixed(1) + 'deg');
+      }
+      charIndex++;
+      w.appendChild(c);
+    }
+    visual.appendChild(w);
+    if (wi < words.length - 1) visual.appendChild(document.createTextNode(' '));
+  });
+
+  el.textContent = '';
+  el.appendChild(srOnly);
+  el.appendChild(visual);
+}
+
+bandEls.forEach(function(band){
+  var spread = parseFloat(band.getAttribute('data-spread')) || 0.34;
+  [].slice.call(band.querySelectorAll('[data-split]')).forEach(function(el){
+    splitText(el, el.getAttribute('data-split'), spread);
+  });
+  band.__a = parseFloat(band.getAttribute('data-a'));
+  band.__b = parseFloat(band.getAttribute('data-b'));
+  band.__ramp = parseFloat(band.getAttribute('data-ramp')) || 0;
+  band.__op = -1;   /* delta gate caches */
+  band.__k  = -1;
+});
+
+/* ============================================================
+   Band maths
+   ============================================================ */
+function smoothstep(p, e0, e1){
+  var t = Math.min(1, Math.max(0, (p - e0) / (e1 - e0)));
+  return t * t * (3 - 2 * t);
+}
+function clamp(v, lo, hi){ return Math.min(hi, Math.max(lo, v)); }
+
+var loadK = 0;   /* band one's one-time load ramp, hands over to scroll */
+
+function updateCaptions(p){
+  for (var i = 0; i < bandEls.length; i++){
+    var band = bandEls[i], a = band.__a, b = band.__b;
+    var f = Math.min(0.02, (b - a) / 3);
+    var inEase  = (i === 0) ? 1 : smoothstep(p, a, a + f);
+    var outEase = (i === bandEls.length - 1) ? 1 : (1 - smoothstep(p, b - f, b));
+    var op = inEase * outEase;
+
+    var ramp = band.__ramp || Math.min(0.025, (b - a) * 0.35);
+    var k = clamp((p - a) / ramp, 0, 1);
+    if (i === 0) k = Math.max(k, loadK);
+
+    if (Math.abs(op - band.__op) > 0.004){
+      band.__op = op;
+      band.style.opacity = op.toFixed(3);
+    }
+    if (Math.abs(k - band.__k) > 0.008){
+      band.__k = k;
+      band.style.setProperty('--k', k.toFixed(3));
+    }
+  }
+}
+
+/* ============================================================
+   Gated seeks, deadlock safe
+   ============================================================ */
+var seekBusy = false, pendingTime = null;
+
+function requestSeek(t){
+  if (!video.duration || isNaN(video.duration)) return;
+  if (seekBusy){ pendingTime = t; return; }
+  seekBusy = true;
+  try { video.currentTime = t; } catch(e){ seekBusy = false; }
+}
+video.addEventListener('seeked', function(){
+  seekBusy = false;
+  if (pendingTime !== null){
+    var t = pendingTime; pendingTime = null; requestSeek(t);
+  }
+});
+video.addEventListener('error', function(){   /* the deadlock escape */
+  seekBusy = false; pendingTime = null; failVideo();
+});
+
+/* ============================================================
+   The rAF loop that rests
+   ============================================================ */
+var target = 0, shown = 0, rafId = null, lastTick = 0, heroOnScreen = true;
+
+function heroProgress(){
+  var r = heroEl.getBoundingClientRect();
+  var range = heroEl.offsetHeight - window.innerHeight;
+  if (range <= 0) return 0;
+  return clamp(-r.top / range, 0, 1);
+}
+
+function tick(now){
+  var dt = Math.min(100, now - (lastTick || now));
+  lastTick = now;
+  var k = 0.16;
+  shown += (target - shown) * (1 - Math.pow(1 - k, dt / 16.667));
+  if (Math.abs(target - shown) < 0.0005){
+    shown = target; rafId = null; lastTick = 0;
+  } else {
+    rafId = requestAnimationFrame(tick);
+  }
+  if (video.duration) requestSeek(shown * video.duration);
+  updateCaptions(shown);
+}
+
+function onScroll(){
+  target = heroProgress();
+  if (rafId === null && heroOnScreen) rafId = requestAnimationFrame(tick);
+}
+
+if ('IntersectionObserver' in window){
+  new IntersectionObserver(function(entries){
+    heroOnScreen = entries[0].isIntersecting;
+    if (heroOnScreen && rafId === null && scrubOn) rafId = requestAnimationFrame(tick);
+  }, {rootMargin:'10px'}).observe(heroEl);
+}
+
+/* ============================================================
+   Poster first, then the streamed Blob behind an honest ring
+   ============================================================ */
+var heroInit = false, started = false;
+
+function startBlobFetch(){
+  if (started) return;
+  started = true;
+  loadHeroBlob().catch(failVideo);
+}
+
+function initHeroOnce(){
+  if (heroInit) return;
+  heroInit = true;
+  bg(poster, POSTER_URL, REMOTE.poster);
+  var img = new Image();
+  img.onload = startBlobFetch;
+  img.onerror = startBlobFetch;
+  img.src = STANDALONE ? REMOTE.poster : POSTER_URL;
+  setTimeout(startBlobFetch, 4000);
+}
+
+function playRemoteDirect(){
+  /* No Blob, no progress ring: a plain remote source. Seeking works because
+     the host answers range requests, which is the one thing the Blob exists
+     to work around. */
+  ring.style.setProperty('--ld', 0);
+  ring.style.opacity = 0;
+  video.src = REMOTE.video;
+  video.load();
+  video.addEventListener('canplay', function(){
+    requestSeek(heroProgress() * video.duration);
+    stage.classList.add('video-ready');
+    onScroll();
+  }, {once:true});
+  return Promise.resolve();
+}
+
+function loadHeroBlob(){
+  if (STANDALONE) return playRemoteDirect();
+  var ctrl = new AbortController();
+  var watchdog = setTimeout(function(){ ctrl.abort(); }, 20000);
+
+  return fetch(VIDEO_URL, {priority:'low', signal: ctrl.signal}).then(function(res){
+    if (!res.ok) throw new Error('http ' + res.status);
+    var total = Number(res.headers.get('Content-Length')) || VIDEO_BYTES;
+    if (!res.body) return res.blob().then(function(b){ clearTimeout(watchdog); return b; });
+
+    var reader = res.body.getReader();
+    var chunks = [], got = 0, lastRing = 0;
+
+    return (function pump(){
+      return reader.read().then(function(r){
+        if (r.done) return new Blob(chunks);
+        clearTimeout(watchdog);
+        watchdog = setTimeout(function(){ ctrl.abort(); }, 20000);
+        chunks.push(r.value);
+        got += r.value.length;
+        var frac = Math.min(1, got / total);
+        var now = performance.now();
+        if (now - lastRing > 100 || frac === 1){
+          lastRing = now;
+          ring.style.setProperty('--ld', Math.round(126 * (1 - frac)));
+        }
+        return pump();
+      });
+    })();
+  }).then(function(blob){
+    clearTimeout(watchdog);
+    ring.style.setProperty('--ld', 0);
+    ring.style.opacity = 0;
+    video.src = URL.createObjectURL(blob);
+    video.load();
+    video.addEventListener('canplay', function(){
+      requestSeek(heroProgress() * video.duration);
+      stage.classList.add('video-ready');
+      onScroll();
+    }, {once:true});
+  });
+}
+
+function makeScrollChevron(){
+  var s = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  s.setAttribute('class','chev'); s.setAttribute('viewBox','0 0 24 24');
+  s.setAttribute('width','26'); s.setAttribute('height','26');
+  s.setAttribute('aria-hidden','true');
+  var p = document.createElementNS('http://www.w3.org/2000/svg','path');
+  p.setAttribute('d','M5 9l7 7 7-7');
+  p.setAttribute('fill','none'); p.setAttribute('stroke','currentColor');
+  p.setAttribute('stroke-width','2'); p.setAttribute('stroke-linecap','round');
+  s.appendChild(p);
+  return s;
+}
+var failed = false;
+var triedRemote = false;
+function failVideo(){
+  if (!triedRemote && !STANDALONE){
+    triedRemote = true;              /* one retry against the remote twin */
+    playRemoteDirect();
+    return;
+  }
+  if (failed) return;
+  failed = true;
+  if (ring && ring.parentNode) ring.replaceWith(makeScrollChevron());
+  stage.classList.add('video-failed');
+  video.style.display = 'none';   /* the page stays complete over the poster */
+}
+
+/* ============================================================
+   The five gates, decided live, not once at load
+   ============================================================ */
+var GATES = [
+  '(max-width: 720px)',
+  '(orientation: portrait) and (max-width: 1024px)',
+  '(orientation: portrait) and (pointer: coarse)',
+  '(orientation: landscape) and (pointer: coarse) and (max-height: 560px)',
+  '(prefers-reduced-motion: reduce)'
+];
+/* null, not false, so the very first applyHeroMode() always commits a state.
+   Starting at false made disableScrub() return early on a phone, leaving the
+   CSS hiding the scrub hero while the JS still believed it was armed. */
+var scrubOn = null;
+
+function enableScrub(){
+  if (scrubOn === true) return;
+  scrubOn = true;
+  document.documentElement.classList.remove('static-hero');
+  initHeroOnce();
+  window.addEventListener('scroll', onScroll, {passive:true});
+  bandEls.forEach(function(b){ b.__op = -1; b.__k = -1; });
+  unpinFinalStates();
+  updateCaptions(heroProgress());
+  onScroll();
+}
+
+function disableScrub(){
+  if (scrubOn === false) return;
+  scrubOn = false;
+  document.documentElement.classList.add('static-hero');
+  window.removeEventListener('scroll', onScroll);
+  if (rafId !== null){ cancelAnimationFrame(rafId); rafId = null; }
+}
+
+function applyHeroMode(){
+  var hit = false;
+  for (var i = 0; i < GATES.length; i++){ if (matchMedia(GATES[i]).matches){ hit = true; break; } }
+  if (hit) disableScrub(); else enableScrub();
+}
+
+var MQLS = GATES.map(function(q){ return matchMedia(q); });
+MQLS.forEach(function(m){
+  if (m.addEventListener) m.addEventListener('change', applyHeroMode);
+  else if (m.addListener) m.addListener(applyHeroMode);
+});
+
+/* ============================================================
+   Reduced motion, honoured live in BOTH directions
+   ============================================================ */
+function pinToFinalStates(){
+  document.documentElement.classList.add('pinned');
+  bandEls.forEach(function(b){
+    b.style.opacity = (b === bandEls[bandEls.length-1]) ? '1' : '0';
+    b.style.setProperty('--k','1');
+  });
+  document.querySelectorAll('.draw').forEach(function(el){ el.classList.add('drawn'); });
+  var crumb = document.getElementById('crumbLabel');
+  if (crumb) crumb.textContent = 'Still warm';
+  var cw = document.querySelector('.clockwrap');
+  if (cw) cw.style.setProperty('--hp', '1');
+  var hold = document.getElementById('holdSection');
+  if (hold) hold.classList.add('hold-complete');
+}
+function unpinFinalStates(){
+  document.documentElement.classList.remove('pinned');
+  bandEls.forEach(function(b){ b.style.opacity = ''; b.style.removeProperty('--k'); });
+  document.querySelectorAll('.draw.drawn').forEach(function(el){ el.classList.remove('drawn'); });
+  var hold = document.getElementById('holdSection');
+  if (hold && !hold.dataset.userCompleted) hold.classList.remove('hold-complete');
+}
+
+var rmq = matchMedia('(prefers-reduced-motion: reduce)');
+function onReducedChange(e){
+  if (e.matches) pinToFinalStates();
+  else applyHeroMode();
+}
+if (rmq.addEventListener) rmq.addEventListener('change', onReducedChange);
+else if (rmq.addListener) rmq.addListener(onReducedChange);
+
+/* ============================================================
+   Band one opens settled: a one-time load ramp that hands to scroll
+   ============================================================ */
+function runLoadRamp(){
+  if (rmq.matches){ loadK = 1; updateCaptions(heroProgress()); return; }
+  var t0 = null, DUR = 1100;
+  (function step(now){
+    if (t0 === null) t0 = now;
+    var e = Math.min(1, (now - t0) / DUR);
+    loadK = e * e * (3 - 2 * e);
+    updateCaptions(shown);
+    if (e < 1) requestAnimationFrame(step);
+  })(performance.now());
+}
+
+/* ============================================================
+   Whisper-level flour drift, mid-cycle at first paint
+   ============================================================ */
+(function motes(){
+  if (rmq.matches) return;
+  var host = document.getElementById('motes');
+  var r = rng(20260909);
+  var frag = document.createDocumentFragment();
+  for (var i = 0; i < 22; i++){
+    var d = document.createElement('div');
+    d.className = 'mote';
+    d.style.left = (r() * 100).toFixed(2) + 'vw';
+    d.style.animationDuration = (74 + r() * 42).toFixed(1) + 's';
+    d.style.animationDelay = '-' + (r() * 90).toFixed(1) + 's';
+    d.style.opacity = (0.35 + r() * 0.5).toFixed(2);
+    var s = (1.6 + r() * 2.6).toFixed(1);
+    d.style.width = s + 'px'; d.style.height = s + 'px';
+    frag.appendChild(d);
+  }
+  host.appendChild(frag);
+})();
+
+/* pause every animation on a hidden tab, pseudo-elements included */
+document.addEventListener('visibilitychange', function(){
+  document.body.classList.toggle('paused', document.hidden);
+});
+
+applyHeroMode();
+if (scrubOn) runLoadRamp(); else loadK = 1;
+
+/* ============================================================
+   BELOW THE FOLD
+   ============================================================ */
+
+/* The three step images, equal treatment, and fetched only as they come
+   into reach. They are deliberately large and clean (about 1920px, one
+   near-transparent pass) because hosts recompress, so loading all three at
+   first paint put 1.45MB in front of a visitor who had not scrolled yet. */
+(function stepImages(){
+  var shots = ['shot1','shot2','shot3'].map(function(id){ return document.getElementById(id); })
+                .filter(Boolean);
+  function load(el, i){
+    if (el.dataset.loaded) return;
+    el.dataset.loaded = '1';
+    bg(el, 'assets/step-' + (i + 1) + '.jpg', REMOTE.steps[i]);
+  }
+  if (!('IntersectionObserver' in window)){
+    shots.forEach(load);
+    return;
+  }
+  var so = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (!e.isIntersecting) return;
+      load(e.target, shots.indexOf(e.target));
+      so.unobserve(e.target);
+    });
+  }, {rootMargin:'600px 0px'});   /* a screenful of warning, so it is in place before it is seen */
+  shots.forEach(function(el){ so.observe(el); });
+})();
+
+/* entrances, and the signature score drawing itself on scroll */
+var io = ('IntersectionObserver' in window) ? new IntersectionObserver(function(entries){
+  entries.forEach(function(e){
+    if (!e.isIntersecting) return;
+    var el = e.target;
+    if (el.classList.contains('draw')) el.classList.add('drawn');
+    else {
+      el.classList.add('in');
+      if (el.classList.contains('stagger')){
+        /* retire the stagger delays once the entrance is done, so later
+           siblings do not hover with a permanent lag */
+        setTimeout(function(){ el.classList.add('done'); }, 1400);
+      }
+    }
+    io.unobserve(el);
+  });
+}, {threshold:0.14, rootMargin:'0px 0px -8% 0px'}) : null;
+
+if (io){
+  document.querySelectorAll('.rise,.stagger,.draw').forEach(function(el){ io.observe(el); });
+} else {
+  document.querySelectorAll('.rise,.stagger').forEach(function(el){ el.classList.add('in','done'); });
+  document.querySelectorAll('.draw').forEach(function(el){ el.classList.add('drawn'); });
+}
+
+/* ---------- the one interactive moment: opening the crumb ---------- */
+(function hold(){
+  var btn  = document.getElementById('holdBtn');
+  var wrap = document.querySelector('.clockwrap');
+  var sect = document.getElementById('holdSection');
+  var hrs  = document.getElementById('crumbLabel');
+  if (!btn || !wrap) return;
+
+  /* lastAt starts far in the past so the first paint is never swallowed by
+     the throttle below. Starting it at 0 meant that on a fast load, where
+     the script runs less than 100ms in, the opening label was never
+     written, and reduced motion showed "Press and hold" on a crumb that
+     was already fully open. */
+  var p = 0, holding = false, raf = null, last = 0, lastShown = '', lastAt = -1e9;
+  var RISE = 2600, FALL = 4200;   /* ms: it opens while held, closes when released */
+
+  function paint(now){
+    if (now - lastAt > 100){                       /* ~10Hz, and only on change */
+      var t = p < 0.06 ? 'Press and hold'
+            : p < 0.55 ? 'Opening'
+            : p < 1    ? 'Almost'
+                       : 'Still warm';
+      if (t !== lastShown){ lastShown = t; lastAt = now; if (hrs) hrs.textContent = t; }
+    }
+    wrap.style.setProperty('--hp', p.toFixed(4));
+  }
+
+  function step(now){
+    var dt = Math.min(100, now - (last || now));
+    last = now;
+    p += holding ? (dt / RISE) : -(dt / FALL);     /* release eases down, never snaps */
+    p = clamp(p, 0, 1);
+    paint(now);
+    if (p >= 1 && holding){
+      sect.classList.add('hold-complete');
+      sect.dataset.userCompleted = '1';
+    }
+    if ((holding && p < 1) || (!holding && p > 0)){
+      raf = requestAnimationFrame(step);
+    } else { raf = null; last = 0; }
+  }
+
+  function start(e){
+    if (e && e.cancelable) e.preventDefault();
+    if (rmq.matches){ p = 1; paint(performance.now()); sect.classList.add('hold-complete'); return; }
+    holding = true;
+    if (raf === null) raf = requestAnimationFrame(step);
+  }
+  function end(){
+    holding = false;
+    if (raf === null && p > 0) raf = requestAnimationFrame(step);
+  }
+
+  btn.addEventListener('pointerdown', start);
+  ['pointerup','pointercancel','pointerleave','blur'].forEach(function(ev){
+    btn.addEventListener(ev, end);
+  });
+  btn.addEventListener('keydown', function(e){
+    if (e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); start(); }
+  });
+  btn.addEventListener('keyup', function(e){
+    if (e.key === ' ' || e.key === 'Enter') end();
+  });
+
+  /* reduced motion gets the finished state with no hold required */
+  if (rmq.matches){ p = 1; paint(performance.now()); sect.classList.add('hold-complete'); }
+})();
+
+/* ---------- WhatsApp and Instagram, shown only once they are real ---------- */
+(function contacts(){
+  var wa = WHATSAPP_NUMBER.replace(/[^0-9]/g, '');
+  var ig = INSTAGRAM_URL.trim();
+
+  var waLink   = document.getElementById('waLink');
+  var igLink   = document.getElementById('igLink');
+  var fallback = document.getElementById('contactFallback');
+  var social   = document.getElementById('socialRow');
+
+  if (wa && waLink){
+    waLink.href = 'https://wa.me/' + wa;
+    waLink.target = '_blank';
+    waLink.rel = 'noopener';
+    waLink.hidden = false;
+  }
+  if (ig && igLink){
+    igLink.href = ig;
+    igLink.target = '_blank';
+    igLink.rel = 'noopener';
+    igLink.hidden = false;
+  }
+  /* the reminder only stays while there is nothing to show */
+  if (fallback && (wa || ig)) fallback.hidden = true;
+
+  if (social){
+    if (wa){
+      var a = document.createElement('a');
+      a.href = 'https://wa.me/' + wa; a.target = '_blank'; a.rel = 'noopener';
+      a.textContent = 'WhatsApp';
+      social.appendChild(a);
+    }
+    if (ig){
+      var b2 = document.createElement('a');
+      b2.href = ig; b2.target = '_blank'; b2.rel = 'noopener';
+      b2.textContent = 'Instagram';
+      social.appendChild(b2);
+    }
+  }
+})();
+
+/* ---------- the order step ---------- */
+(function form(){
+  var f  = document.getElementById('reserveForm');
+  var ok = document.getElementById('success');
+  if (!f || !ok) return;
+
+  var sel  = f.querySelector('#loaves');
+  var qty  = document.getElementById('totalQty');
+  var fig  = document.getElementById('totalFig');
+  var btn  = f.querySelector('button[type=submit]');
+  var payNote  = document.getElementById('payNote');
+  var demoNote = document.getElementById('demoNote');
+
+  function count(){ return parseInt(sel && sel.value, 10) || 1; }
+
+  /* A link for this quantity, or the single-loaf link as the fallback, or
+     nothing at all, which keeps the site on reservations only. */
+  function linkFor(n){
+    var direct = STRIPE_LINKS[n];
+    if (direct && direct.trim()) return direct.trim();
+    var first = STRIPE_LINKS[1];
+    return (first && first.trim()) ? first.trim() : '';
+  }
+  function paymentIsLive(){ return !!linkFor(count()); }
+
+  /* the running total, so the price is never a surprise at the end */
+  function total(){
+    var n = count();
+    if (qty) qty.textContent = n === 1 ? '1 loaf' : n + ' loaves';
+    var unit = document.getElementById('unitPrice');
+    if (unit) unit.textContent = money(LOAF_PRICE);
+    var sum = money(n * LOAF_PRICE);
+    if (fig) fig.textContent = sum;
+    if (btn) btn.textContent = paymentIsLive()
+      ? 'Pay ' + sum + ' and reserve'
+      : (WHATSAPP_NUMBER.trim() ? 'Reserve on WhatsApp' : "Reserve this week's loaf");
+    if (payNote)  payNote.hidden  = !paymentIsLive();
+    if (demoNote) demoNote.hidden = paymentIsLive();
+  }
+  if (sel) sel.addEventListener('change', total);
+  total();
+
+  f.addEventListener('submit', function(e){
+    e.preventDefault();
+    var name = f.querySelector('#name'), email = f.querySelector('#email');
+    if (!name.value.trim()){ name.focus(); return; }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.value)){ email.focus(); return; }
+
+    var n = count();
+    var dayEl = f.querySelector('#day');
+    var day = (dayEl && dayEl.value) || 'Saturday';
+    var link = linkFor(n);
+
+    if (link){
+      /* Hand over to Stripe. The email is offered as a convenience; if the
+         link does not accept it, Stripe simply asks for it on its own page. */
+      var url = link + (link.indexOf('?') === -1 ? '?' : '&') +
+                'prefilled_email=' + encodeURIComponent(email.value.trim());
+      if (btn){ btn.disabled = true; btn.textContent = 'Taking you to payment'; }
+      window.location.href = url;
+      return;
+    }
+
+    /* No card payment set. If there is a WhatsApp number, send the order
+       there, which is how it actually reaches the bakery. */
+    var wa = WHATSAPP_NUMBER.replace(/[^0-9]/g, '');
+    if (wa){
+      var msg = 'Hello, I would like to reserve ' + n + (n === 1 ? ' loaf' : ' loaves') +
+                ' for ' + day + ' morning.\n\nName: ' + name.value.trim() +
+                '\nEmail: ' + email.value.trim() +
+                '\nTotal: ' + money(n * LOAF_PRICE) +
+                '\n\nMy address in Arabian Ranches: ';
+      if (btn){ btn.disabled = true; btn.textContent = 'Opening WhatsApp'; }
+      window.open('https://wa.me/' + wa + '?text=' + encodeURIComponent(msg), '_blank', 'noopener');
+      f.classList.add('gone');
+      var waLine = document.getElementById('successLine');
+      if (waLine){
+        waLine.textContent = 'Your order is open in WhatsApp. Add your address, send it, and we ' +
+          'will confirm your ' + (n === 1 ? 'loaf' : 'loaves') + ' for ' + day + ' morning.';
+      }
+      ok.classList.add('on');
+      ok.focus && ok.focus();
+      return;
+    }
+
+    /* Nothing set at all. Show the confirmation. */
+    f.classList.add('gone');
+    var line = document.getElementById('successLine');
+    if (line){
+      line.textContent = 'Reserved, ' + n + (n === 1 ? ' loaf' : ' loaves') + ' for ' + day +
+        " morning. We'll email you the night before, when the dough goes in.";
+    }
+    ok.classList.add('on');
+    ok.focus && ok.focus();
+  });
+})();
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+# Publishes the-sourdough-house as a browsable web page so it can be looked at
+# on a phone or an iPad. A file opened from disk cannot do this: Safari refuses
+# to let a local file pull in the film and the photographs, so the site has to
+# be served over https to be seen at all.
+#
+# The six media files are not in the repo. This fetches them at build time from
+# where they are already hosted, so the published page serves its own copy and
+# depends on nothing at runtime.
+
+name: Publish the preview site
+
+on:
+  push:
+    branches: [claude/10k-websites-skill-15ngpa]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch the film and the photographs
+        run: bash the-sourdough-house/fetch-assets.sh
+
+      - name: Stage just the site itself
+        run: |
+          mkdir -p _site
+          cp the-sourdough-house/index.html _site/index.html
+          cp -r the-sourdough-house/assets _site/assets
+          rm -f _site/assets/.gitkeep
+          ls -la _site _site/assets
+
+      # Pages has to be switched on once by the repo owner (Settings > Pages >
+      # Source: GitHub Actions). A workflow token is not allowed to do it, so
+      # this step only reads the existing setting.
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
