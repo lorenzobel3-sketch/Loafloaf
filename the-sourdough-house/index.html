@@ -395,6 +395,16 @@ h3{font-size:clamp(1.15rem,1.7vw,1.42rem);font-weight:600}
 .allergen{margin-top:2.6rem;padding-top:1.6rem;border-top:1px solid rgba(243,234,218,.2);
   color:rgba(243,234,218,.72);font-size:.92rem;max-width:56ch}
 .allergen strong{color:#FBF6EC;font-weight:500}
+.btn-wa{background:#1F8F4E;display:inline-flex;align-items:center;gap:.6rem;margin-top:.2rem}
+.btn-wa:hover{background:#25A65C}
+.ig{display:inline-block;margin-top:.9rem;color:rgba(243,234,218,.72);font-size:.92rem;
+  text-decoration:none;border-bottom:1px solid var(--accent-hover);padding-bottom:2px;
+  transition:color .3s var(--ease)}
+.ig:hover{color:#FBF6EC}
+footer .social{display:flex;gap:1.4rem;margin-top:1.2rem;flex-wrap:wrap}
+footer .social a{color:rgba(243,234,218,.72);text-decoration:none;font-size:.9rem;
+  border-bottom:1px solid rgba(148,80,42,.7);padding-bottom:2px;transition:color .3s var(--ease)}
+footer .social a:hover{color:#FBF6EC}
 
 /* ---- 8. Footer ---- */
 footer{background:var(--text-primary);color:rgba(243,234,218,.6);padding:0 6vw 4.5rem;
@@ -641,16 +651,16 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
     <h2 class="rise">Yes, it costs more than the supermarket.</h2>
     <div class="price-grid">
       <div class="pricecard rise">
-        <p class="fig">&pound;6.50</p>
+        <p class="fig">AED 30</p>
         <p class="per">One loaf, collected Sunday</p>
       </div>
       <ul class="breakdown rise">
-        <li><span class="amt">&pound;0.80</span>
+        <li><span class="amt">AED 3.50</span>
           <p>Organic stoneground flour from a mill two counties over. It costs about three times
             what white commodity flour costs, and it is the only thing in here with a flavour.</p></li>
-        <li><span class="amt">&pound;0.05</span>
+        <li><span class="amt">AED 0.20</span>
           <p>Water and salt. This is the honest part. They cost almost nothing.</p></li>
-        <li><span class="amt">&pound;5.65</span>
+        <li><span class="amt">AED 26.30</span>
           <p>Thirty-six hours, a hot oven overnight, and a batch small enough that every loaf gets
             looked at. This is the whole business, and it is why a machine cannot do it cheaper.</p></li>
       </ul>
@@ -730,15 +740,15 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
       </div>
 
       <div class="total" aria-live="polite">
-        <span class="total-line"><span id="totalQty">1 loaf</span> at &pound;6.50 each</span>
-        <span class="total-fig" id="totalFig">&pound;6.50</span>
+        <span class="total-line"><span id="totalQty">1 loaf</span> at <span id="unitPrice">AED 30.00</span> each</span>
+        <span class="total-fig" id="totalFig">AED 30.00</span>
       </div>
 
       <button class="btn" type="submit">Reserve this week's loaf</button>
       <p class="note" id="payNote" hidden>Payment is handled by Stripe. Your card details are
         entered on their page and never touch this site.</p>
-      <p class="note" id="demoNote">Online payment is not switched on yet. Reserve your loaf
-        here and pay at the counter when you collect.</p>
+      <p class="note" id="demoNote">Card payment is not switched on yet. Reserve your loaf here
+        and pay when you collect.</p>
     </form>
 
     <div class="success" id="success" role="status" aria-live="polite">
@@ -760,7 +770,15 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
       </div>
       <div class="collect-block">
         <h3>Any questions</h3>
-        <p class="tofill">TO FILL: email, and a phone number if you want one</p>
+        <p id="contactFallback" class="tofill">TO FILL: add your WhatsApp number in the settings
+          at the top of the file</p>
+        <a class="btn btn-wa" id="waLink" href="#" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true" width="17" height="17">
+            <path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 18.15h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.25-8.23a8.2 8.2 0 0 1 8.24 8.24c0 4.54-3.7 8.23-8.24 8.23Zm4.52-6.16c-.25-.13-1.47-.72-1.69-.8-.23-.09-.39-.13-.56.12-.16.25-.64.8-.79.97-.14.16-.29.18-.54.06-.25-.13-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.44-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.47c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.74 2.66 4.22 3.73.59.25 1.05.4 1.41.52.59.19 1.13.16 1.56.1.47-.07 1.47-.6 1.68-1.18.2-.58.2-1.08.14-1.18-.06-.11-.22-.17-.47-.29Z"/>
+          </svg>
+          Message us on WhatsApp
+        </a>
+        <a class="ig" id="igLink" href="#" hidden>Follow on Instagram</a>
       </div>
     </div>
 
@@ -781,6 +799,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
         The Sourdough House
       </div>
       <p class="disclose" style="margin-top:1rem">Baked in small batches, once a week.</p>
+      <div class="social" id="socialRow"></div>
       <!-- TRADING DETAILS. Replace with the real ones before launch. -->
       <p class="tofill" style="margin-top:1rem;display:inline-block">TO FILL: registered trading
         name, contact email, and company number if you are registered</p>
@@ -837,7 +856,27 @@ var STRIPE_LINKS = {
   2: '',   /* two loaves */
   3: ''    /* three loaves */
 };
-var LOAF_PRICE = 6.50;
+
+/* ------------------------------------------------------------
+   THE SHOP'S DETAILS. Fill these in.
+
+   WHATSAPP_NUMBER  Country code first, digits only, no plus and
+                    no spaces. A Dubai mobile looks like
+                    '9715XXXXXXXX'. Once set, reserving opens
+                    WhatsApp with the order already written out,
+                    so it reaches you without any Stripe account.
+
+   INSTAGRAM_URL    The full address of your profile.
+
+   LOAF_PRICE       In dirhams. CONFIRM THIS. 30 is a placeholder
+                    I chose, not your price.
+   ------------------------------------------------------------ */
+var WHATSAPP_NUMBER = '';
+var INSTAGRAM_URL   = '';
+var LOAF_PRICE      = 30;
+var CURRENCY        = 'AED';
+
+function money(n){ return CURRENCY + ' ' + (Math.round(n * 100) / 100).toFixed(2); }
 
 var CDN = 'https://d2ol7oe51mr4n9.cloudfront.net/user_3J2dDycbIIzKPwTgbtXWRDYi82n/';
 var REMOTE = {
@@ -1372,6 +1411,47 @@ if (io){
   if (rmq.matches){ p = 1; paint(performance.now()); sect.classList.add('hold-complete'); }
 })();
 
+/* ---------- WhatsApp and Instagram, shown only once they are real ---------- */
+(function contacts(){
+  var wa = WHATSAPP_NUMBER.replace(/[^0-9]/g, '');
+  var ig = INSTAGRAM_URL.trim();
+
+  var waLink   = document.getElementById('waLink');
+  var igLink   = document.getElementById('igLink');
+  var fallback = document.getElementById('contactFallback');
+  var social   = document.getElementById('socialRow');
+
+  if (wa && waLink){
+    waLink.href = 'https://wa.me/' + wa;
+    waLink.target = '_blank';
+    waLink.rel = 'noopener';
+    waLink.hidden = false;
+  }
+  if (ig && igLink){
+    igLink.href = ig;
+    igLink.target = '_blank';
+    igLink.rel = 'noopener';
+    igLink.hidden = false;
+  }
+  /* the reminder only stays while there is nothing to show */
+  if (fallback && (wa || ig)) fallback.hidden = true;
+
+  if (social){
+    if (wa){
+      var a = document.createElement('a');
+      a.href = 'https://wa.me/' + wa; a.target = '_blank'; a.rel = 'noopener';
+      a.textContent = 'WhatsApp';
+      social.appendChild(a);
+    }
+    if (ig){
+      var b2 = document.createElement('a');
+      b2.href = ig; b2.target = '_blank'; b2.rel = 'noopener';
+      b2.textContent = 'Instagram';
+      social.appendChild(b2);
+    }
+  }
+})();
+
 /* ---------- the order step ---------- */
 (function form(){
   var f  = document.getElementById('reserveForm');
@@ -1401,11 +1481,13 @@ if (io){
   function total(){
     var n = count();
     if (qty) qty.textContent = n === 1 ? '1 loaf' : n + ' loaves';
-    var sum = (n * LOAF_PRICE).toFixed(2);
-    if (fig) fig.textContent = '\u00A3' + sum;
+    var unit = document.getElementById('unitPrice');
+    if (unit) unit.textContent = money(LOAF_PRICE);
+    var sum = money(n * LOAF_PRICE);
+    if (fig) fig.textContent = sum;
     if (btn) btn.textContent = paymentIsLive()
-      ? 'Pay \u00A3' + sum + ' and reserve'
-      : "Reserve this week's loaf";
+      ? 'Pay ' + sum + ' and reserve'
+      : (WHATSAPP_NUMBER.trim() ? 'Reserve on WhatsApp' : "Reserve this week's loaf");
     if (payNote)  payNote.hidden  = !paymentIsLive();
     if (demoNote) demoNote.hidden = paymentIsLive();
   }
@@ -1431,7 +1513,28 @@ if (io){
       return;
     }
 
-    /* No link set, so nothing can be charged. Show the confirmation. */
+    /* No card payment set. If there is a WhatsApp number, send the order
+       there, which is how it actually reaches the bakery. */
+    var wa = WHATSAPP_NUMBER.replace(/[^0-9]/g, '');
+    if (wa){
+      var msg = 'Hello, I would like to reserve ' + n + (n === 1 ? ' loaf' : ' loaves') +
+                ' for Sunday.\n\nName: ' + name.value.trim() +
+                '\nEmail: ' + email.value.trim() +
+                '\nTotal: ' + money(n * LOAF_PRICE);
+      if (btn){ btn.disabled = true; btn.textContent = 'Opening WhatsApp'; }
+      window.open('https://wa.me/' + wa + '?text=' + encodeURIComponent(msg), '_blank', 'noopener');
+      f.classList.add('gone');
+      var waLine = document.getElementById('successLine');
+      if (waLine){
+        waLine.textContent = 'Your order is open in WhatsApp. Send the message and we will ' +
+          'confirm your ' + (n === 1 ? 'loaf' : 'loaves') + ' for Sunday.';
+      }
+      ok.classList.add('on');
+      ok.focus && ok.focus();
+      return;
+    }
+
+    /* Nothing set at all. Show the confirmation. */
     f.classList.add('gone');
     var line = document.getElementById('successLine');
     if (line){
