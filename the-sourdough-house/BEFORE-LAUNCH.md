@@ -7,10 +7,14 @@ below has to be true before it is public. Nothing here is optional.
 
 - [ ] **Replace the generated imagery with real photographs of the actual
       bread.** The hero film, the ending frame and the three step pictures
-      are all AI generated. Showing them as the product a customer will
-      receive is misleading. Either swap them for real photographs, or add a
-      plain line to the footer saying the imagery is illustrative and AI
-      generated. The first is much better.
+      are all AI generated placeholders, held until real photographs of the
+      bread arrive. Showing them as the product a customer will receive is
+      misleading.
+
+      If the site has to go live before those photographs exist, the footer
+      already carries the disclosure line, commented out. Delete the two
+      comment markers around it and the site is honest again. Remove the
+      block entirely once the real photographs are in.
 
 - [ ] **Confirm every factual claim.** These were invented and read as
       statements the business is making:
