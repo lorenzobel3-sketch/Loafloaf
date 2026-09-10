@@ -5,16 +5,21 @@ below has to be true before it is public. Nothing here is optional.
 
 ## Blocking. Do not put the site online until these are done.
 
-- [ ] **Replace the generated imagery with real photographs of the actual
-      bread.** The hero film, the ending frame and the three step pictures
-      are all AI generated placeholders, held until real photographs of the
-      bread arrive. Showing them as the product a customer will receive is
-      misleading.
+- [x] **The film stays, and the footer says so.** The hero film is
+      generated rather than shot in the kitchen, and it is staying. The
+      footer now carries one plain line saying the imagery is illustrative
+      and created digitally. Do not delete that line while any generated
+      imagery remains on the page.
 
-      If the site has to go live before those photographs exist, the footer
-      already carries the disclosure line, commented out. Delete the two
-      comment markers around it and the site is honest again. Remove the
-      block entirely once the real photographs are in.
+- [ ] **Swap the three step pictures for real photographs** when they
+      exist: the starter, the dough, the scored loaf. Shoot all three at
+      the same window at the same time of day so they match. Once they are
+      in, narrow the footer line so it refers to the film alone.
+
+- [ ] **Fill in every TO FILL box.** They are styled to be impossible to
+      miss: where to collect, when, how to ask a question, and the trading
+      details in the footer. A customer who reserves a loaf and cannot find
+      out where to come has been sold nothing.
 
 - [ ] **Confirm every factual claim.** These were invented and read as
       statements the business is making:
