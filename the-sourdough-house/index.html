@@ -684,28 +684,11 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
   </section>
 
   <!-- ============ 6. WHAT PEOPLE SAY ============ -->
-  <section class="slab" id="says">
-    <p class="kick rise">From the counter</p>
-    <h2 class="rise">What people say.</h2>
-    <div class="quotes rise">
-      <blockquote>
-        <p>I read the back of my usual bag after this and put it straight back on the shelf.</p>
-        <cite>Marta, three streets over</cite>
-      </blockquote>
-      <blockquote>
-        <p>Sunday morning smells different in this house now. My kids fight over the end piece.</p>
-        <cite>Dan, collects at eight</cite>
-      </blockquote>
-      <blockquote>
-        <p>I thought six pounds was mad for a loaf. Then I made it last five days.</p>
-        <cite>Priya, converted in one week</cite>
-      </blockquote>
-      <blockquote>
-        <p>The crust actually cracks. I had forgotten bread did that.</p>
-        <cite>Tom, back every week</cite>
-      </blockquote>
-    </div>
-  </section>
+  <!-- REMOVED. These four quotes were written, not collected. They were
+       honest while the bakery was invented and the footer said so. On a real
+       trading site they would be fabricated reviews, which is both dishonest
+       and, in the UK and the US, unlawful. The section returns the moment
+       there are real words from real customers, with their permission. -->
 
   <!-- ============ 7. THE FORM ============ -->
   <section class="slab" id="reserve">
@@ -740,8 +723,8 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
       <button class="btn" type="submit">Reserve this week's loaf</button>
       <p class="note" id="payNote" hidden>Payment is handled by Stripe. Your card details are
         entered on their page and never touch this site.</p>
-      <p class="note" id="demoNote">This is a demonstration site for an invented bakery. No
-        payment can be taken and no loaf will arrive.</p>
+      <p class="note" id="demoNote">Online payment is not switched on yet. Reserve your loaf
+        here and pay at the counter when you collect.</p>
     </form>
 
     <div class="success" id="success" role="status" aria-live="polite">
@@ -761,10 +744,10 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
         </svg>
         The Sourdough House
       </div>
-      <p class="disclose" style="margin-top:1rem">The Sourdough House is an invented brand, made to
-        demonstrate what this kind of website can do. There is no bakery, no bake and no loaf.
-        The film and the photographs on this page were generated, and the quotes are written,
-        not collected.</p>
+      <!-- FOOTER, NEEDS YOUR REAL DETAILS BEFORE LAUNCH:
+           trading name, where you bake, how to reach you, and if you are a
+           registered company, the company number. -->
+      <p class="disclose" style="margin-top:1rem">Baked in small batches, once a week.</p>
     </div>
     <p>Flour. Water. Salt. And thirty-six hours.</p>
   </div>
@@ -801,9 +784,9 @@ var VIDEO_BYTES = 4737233;
    first, it is used for every order and Stripe asks for the
    quantity itself.
 
-   Leave them empty and the site stays a demonstration: the
-   button shows a confirmation and NO money can move. That is
-   deliberate, because this is an invented bakery.
+   Leave them empty and the site takes reservations only: the
+   button shows a confirmation and no money moves, so customers
+   pay at the counter on collection.
    ============================================================ */
 var STRIPE_LINKS = {
   1: '',   /* one loaf   */
@@ -1361,7 +1344,7 @@ if (io){
   function count(){ return parseInt(sel && sel.value, 10) || 1; }
 
   /* A link for this quantity, or the single-loaf link as the fallback, or
-     nothing at all, which keeps the site a demonstration. */
+     nothing at all, which keeps the site on reservations only. */
   function linkFor(n){
     var direct = STRIPE_LINKS[n];
     if (direct && direct.trim()) return direct.trim();
