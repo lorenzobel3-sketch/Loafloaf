@@ -382,6 +382,20 @@ h3{font-size:clamp(1.15rem,1.7vw,1.42rem);font-weight:600}
 .success p{color:#F3EADA}
 .form.gone{display:none}
 
+/* collection details, laid out as a counter card rather than a form */
+.collect{display:grid;gap:1.6rem;margin-top:3.4rem;padding-top:2.4rem;
+  border-top:1px solid rgba(243,234,218,.2)}
+@media (min-width:820px){.collect{grid-template-columns:repeat(3,1fr);gap:2.6rem}}
+.collect-block h3{font-size:1rem;color:#FBF6EC;margin-bottom:.6rem}
+.collect-block p{color:rgba(243,234,218,.72);font-size:.97rem;max-width:30ch}
+/* obviously unfinished, so it cannot ship unnoticed */
+.tofill{color:#FBF6EC !important;background:rgba(148,80,42,.34);
+  border:1px dashed var(--accent-hover);border-radius:3px;padding:.5em .7em;
+  font-family:var(--mono);font-size:.8rem;letter-spacing:.06em}
+.allergen{margin-top:2.6rem;padding-top:1.6rem;border-top:1px solid rgba(243,234,218,.2);
+  color:rgba(243,234,218,.72);font-size:.92rem;max-width:56ch}
+.allergen strong{color:#FBF6EC;font-weight:500}
+
 /* ---- 8. Footer ---- */
 footer{background:var(--text-primary);color:rgba(243,234,218,.6);padding:0 6vw 4.5rem;
   font-size:.88rem}
@@ -730,6 +744,28 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
     <div class="success" id="success" role="status" aria-live="polite">
       <p id="successLine">Reserved. We'll email you Friday night when the dough goes in.</p>
     </div>
+
+    <!-- COLLECTION. Replace every TO FILL below with the real thing.
+         A customer who has just reserved a loaf needs to know where to come
+         and when. Leaving these unfilled is the one thing that makes the
+         reservation useless. -->
+    <div class="collect">
+      <div class="collect-block">
+        <h3>Where to collect</h3>
+        <p class="tofill">TO FILL: the address, or the market and stall</p>
+      </div>
+      <div class="collect-block">
+        <h3>When</h3>
+        <p class="tofill">TO FILL: Sunday, and the hours</p>
+      </div>
+      <div class="collect-block">
+        <h3>Any questions</h3>
+        <p class="tofill">TO FILL: email, and a phone number if you want one</p>
+      </div>
+    </div>
+
+    <p class="allergen"><strong>Allergens.</strong> Our loaf is made with wheat flour and
+      contains gluten. It is baked in a kitchen that handles wheat.</p>
   </section>
 
 </main>
@@ -744,22 +780,18 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
         </svg>
         The Sourdough House
       </div>
-      <!-- FOOTER, NEEDS YOUR REAL DETAILS BEFORE LAUNCH:
-           trading name, where you bake, how to reach you, and if you are a
-           registered company, the company number. -->
       <p class="disclose" style="margin-top:1rem">Baked in small batches, once a week.</p>
+      <!-- TRADING DETAILS. Replace with the real ones before launch. -->
+      <p class="tofill" style="margin-top:1rem;display:inline-block">TO FILL: registered trading
+        name, contact email, and company number if you are registered</p>
 
-      <!-- IMAGERY DISCLOSURE, currently off.
-           The film and photographs are AI generated placeholders, waiting on
-           real photographs of the actual bread. That is fine while the site
-           is not public. If it has to go live before the real ones arrive,
-           delete these two comment markers to switch this line on, and the
-           site is honest again. Remove the whole block once the real
-           photographs are in. -->
-      <!--
-      <p class="disclose" style="margin-top:.7rem">The photography and film on this page are
-        illustrative and were generated, not photographed in our kitchen.</p>
-      -->
+      <!-- The film at the top of this page is staying, and it is generated
+           rather than shot in the kitchen, so this line says so. When the
+           real photographs replace the three step pictures, narrow the
+           wording to the film alone. Do not delete it while any generated
+           imagery remains. -->
+      <p class="disclose" style="margin-top:.7rem">The film and photography on this page are
+        illustrative and were created digitally, not photographed in our kitchen.</p>
     </div>
     <p>Flour. Water. Salt. And thirty-six hours.</p>
   </div>
