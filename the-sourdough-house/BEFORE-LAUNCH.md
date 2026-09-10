@@ -41,8 +41,9 @@ below has to be true before it is public. Nothing here is optional.
       - the cost breakdown in "What it costs" (AED 4.00 flour, AED 0.25
         water and salt, AED 30.75 time and oven), scaled to your AED 35 and
         still invented
-      - "organic stoneground flour from a mill two counties over", which
-        matters twice over because the headline says organic
+      - the mill is no longer named or placed. The line now reads
+        "certified organic stoneground flour", which is confirmed true.
+        If you want to name your mill, add it here
       - "never part baked, never frozen, never brought back to life in a
         warmer", which is now one of the three freshness claims
       - baked overnight before each delivery morning, delivered Saturday
@@ -59,10 +60,12 @@ below has to be true before it is public. Nothing here is optional.
 - [ ] **Fill in the footer.** Trading name, a way to reach you, and your
       company number if you are registered.
 
-- [ ] **If the headline stays "Organic. The way it should be", be certain
-      the flour is certified organic.** Organic is a protected term for
-      food sold in the UK and the EU. Using it without certification is an
-      offence, not a matter of taste.
+- [x] **The flour is certified organic**, confirmed by the owner, so the
+      headline "Organic. The way it should be" stands. Keep the
+      certificate to hand: organic is a legally protected term wherever the
+      loaf is sold, and the claim has to be evidenced, not just true. If
+      the mill or the flour ever changes, this line has to be rechecked
+      before the next bake goes on sale.
 
 ## Before taking money
 
