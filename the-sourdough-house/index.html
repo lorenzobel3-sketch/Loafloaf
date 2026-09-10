@@ -767,7 +767,36 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 var VIDEO_URL   = 'assets/hero-scrub.mp4';
 var POSTER_URL  = 'assets/hero-poster.jpg';
 var ENDING_URL  = 'assets/hero-ending.jpg';
-var VIDEO_BYTES = 5400000;   /* PATCHED AFTER ENCODE */
+var VIDEO_BYTES = 4737233;
+
+/* Standalone fallback. The deployed site serves everything from assets/,
+   which is what these constants point at. But this one file is also handed
+   around on its own for review, where assets/ is not beside it, so each
+   asset has a remote twin to fall back to. Opened straight from disk the
+   Blob fetch cannot run at all (browsers block fetch on file:// URLs), so
+   the video falls back to a plain remote src, which still scrubs because
+   the host supports range requests. Nothing here affects a real deploy:
+   when assets/ is present it is always used. */
+var CDN = 'https://d2ol7oe51mr4n9.cloudfront.net/user_3J2dDycbIIzKPwTgbtXWRDYi82n/';
+var REMOTE = {
+  video : CDN + '9d053a14-fe9a-466f-9940-c9a56846ef3b.mp4',
+  poster: CDN + '010af5d2-5c1f-41e2-85da-d2061305b1ee.jpg',
+  ending: CDN + '26a14da8-3360-4f88-a6b4-53e5d4e0a9e7.jpg',
+  steps : [CDN + 'f6bab429-3233-4355-a71a-321a88ed95a8.jpg',
+           CDN + '58bc7b4f-5553-4a86-8373-816c6d87aef4.jpg',
+           CDN + '03a7b9db-22bc-4bf8-9d3f-3574ef0de87e.jpg']
+};
+var STANDALONE = location.protocol === 'file:';
+
+/* Paint a background image, trying the local file and falling back once. */
+function bg(el, local, remote){
+  if (!el) return;
+  if (STANDALONE){ el.style.backgroundImage = "url('" + remote + "')"; return; }
+  var probe = new Image();
+  probe.onload  = function(){ el.style.backgroundImage = "url('" + local + "')"; };
+  probe.onerror = function(){ el.style.backgroundImage = "url('" + remote + "')"; };
+  probe.src = local;
+}
 
 var stage   = document.getElementById('stage');
 var video   = document.getElementById('heroVideo');
@@ -776,7 +805,7 @@ var ring    = document.getElementById('ring');
 var heroEl  = document.getElementById('hero');
 var bandEls = [].slice.call(document.querySelectorAll('.band'));
 
-document.getElementById('staticShot').style.backgroundImage = "url('" + ENDING_URL + "')";
+bg(document.getElementById('staticShot'), ENDING_URL, REMOTE.ending);
 
 /* ============================================================
    Seeded split, done once at load, so the scatter is identical
@@ -948,15 +977,32 @@ function startBlobFetch(){
 function initHeroOnce(){
   if (heroInit) return;
   heroInit = true;
-  poster.style.backgroundImage = "url('" + POSTER_URL + "')";
+  bg(poster, POSTER_URL, REMOTE.poster);
   var img = new Image();
   img.onload = startBlobFetch;
   img.onerror = startBlobFetch;
-  img.src = POSTER_URL;
+  img.src = STANDALONE ? REMOTE.poster : POSTER_URL;
   setTimeout(startBlobFetch, 4000);
 }
 
+function playRemoteDirect(){
+  /* No Blob, no progress ring: a plain remote source. Seeking works because
+     the host answers range requests, which is the one thing the Blob exists
+     to work around. */
+  ring.style.setProperty('--ld', 0);
+  ring.style.opacity = 0;
+  video.src = REMOTE.video;
+  video.load();
+  video.addEventListener('canplay', function(){
+    requestSeek(heroProgress() * video.duration);
+    stage.classList.add('video-ready');
+    onScroll();
+  }, {once:true});
+  return Promise.resolve();
+}
+
 function loadHeroBlob(){
+  if (STANDALONE) return playRemoteDirect();
   var ctrl = new AbortController();
   var watchdog = setTimeout(function(){ ctrl.abort(); }, 20000);
 
@@ -1011,7 +1057,13 @@ function makeScrollChevron(){
   return s;
 }
 var failed = false;
+var triedRemote = false;
 function failVideo(){
+  if (!triedRemote && !STANDALONE){
+    triedRemote = true;              /* one retry against the remote twin */
+    playRemoteDirect();
+    return;
+  }
   if (failed) return;
   failed = true;
   if (ring && ring.parentNode) ring.replaceWith(makeScrollChevron());
@@ -1157,7 +1209,7 @@ if (scrubOn) runLoadRamp(); else loadK = 1;
   function load(el, i){
     if (el.dataset.loaded) return;
     el.dataset.loaded = '1';
-    el.style.backgroundImage = "url('assets/step-" + (i + 1) + ".jpg')";
+    bg(el, 'assets/step-' + (i + 1) + '.jpg', REMOTE.steps[i]);
   }
   if (!('IntersectionObserver' in window)){
     shots.forEach(load);
