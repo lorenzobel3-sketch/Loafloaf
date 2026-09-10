@@ -738,9 +738,10 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
       </div>
 
       <button class="btn" type="submit">Reserve this week's loaf</button>
-      <p class="note">Nothing is taken now. You pay at the counter when you collect on Sunday.</p>
-      <p class="note">This is a demonstration site for an invented bakery, so no order is sent
-        anywhere and no loaf will arrive.</p>
+      <p class="note" id="payNote" hidden>Payment is handled by Stripe. Your card details are
+        entered on their page and never touch this site.</p>
+      <p class="note" id="demoNote">This is a demonstration site for an invented bakery. No
+        payment can be taken and no loaf will arrive.</p>
     </form>
 
     <div class="success" id="success" role="status" aria-live="polite">
@@ -792,6 +793,25 @@ var VIDEO_BYTES = 4737233;
    the video falls back to a plain remote src, which still scrubs because
    the host supports range requests. Nothing here affects a real deploy:
    when assets/ is present it is always used. */
+/* ============================================================
+   PAYMENT. This is the only place to change.
+
+   Paste your Stripe payment links between the quotes to switch
+   the shop on. One link per quantity. If you only fill in the
+   first, it is used for every order and Stripe asks for the
+   quantity itself.
+
+   Leave them empty and the site stays a demonstration: the
+   button shows a confirmation and NO money can move. That is
+   deliberate, because this is an invented bakery.
+   ============================================================ */
+var STRIPE_LINKS = {
+  1: '',   /* one loaf   */
+  2: '',   /* two loaves */
+  3: ''    /* three loaves */
+};
+var LOAF_PRICE = 6.50;
+
 var CDN = 'https://d2ol7oe51mr4n9.cloudfront.net/user_3J2dDycbIIzKPwTgbtXWRDYi82n/';
 var REMOTE = {
   video : CDN + '9d053a14-fe9a-466f-9940-c9a56846ef3b.mp4',
@@ -1325,18 +1345,67 @@ if (io){
   if (rmq.matches){ p = 1; paint(performance.now()); sect.classList.add('hold-complete'); }
 })();
 
-/* ---------- the form: a JS-only success state, honestly labelled ---------- */
+/* ---------- the order step ---------- */
 (function form(){
-  var f = document.getElementById('reserveForm');
+  var f  = document.getElementById('reserveForm');
   var ok = document.getElementById('success');
   if (!f || !ok) return;
+
+  var sel  = f.querySelector('#loaves');
+  var qty  = document.getElementById('totalQty');
+  var fig  = document.getElementById('totalFig');
+  var btn  = f.querySelector('button[type=submit]');
+  var payNote  = document.getElementById('payNote');
+  var demoNote = document.getElementById('demoNote');
+
+  function count(){ return parseInt(sel && sel.value, 10) || 1; }
+
+  /* A link for this quantity, or the single-loaf link as the fallback, or
+     nothing at all, which keeps the site a demonstration. */
+  function linkFor(n){
+    var direct = STRIPE_LINKS[n];
+    if (direct && direct.trim()) return direct.trim();
+    var first = STRIPE_LINKS[1];
+    return (first && first.trim()) ? first.trim() : '';
+  }
+  function paymentIsLive(){ return !!linkFor(count()); }
+
+  /* the running total, so the price is never a surprise at the end */
+  function total(){
+    var n = count();
+    if (qty) qty.textContent = n === 1 ? '1 loaf' : n + ' loaves';
+    var sum = (n * LOAF_PRICE).toFixed(2);
+    if (fig) fig.textContent = '\u00A3' + sum;
+    if (btn) btn.textContent = paymentIsLive()
+      ? 'Pay \u00A3' + sum + ' and reserve'
+      : "Reserve this week's loaf";
+    if (payNote)  payNote.hidden  = !paymentIsLive();
+    if (demoNote) demoNote.hidden = paymentIsLive();
+  }
+  if (sel) sel.addEventListener('change', total);
+  total();
+
   f.addEventListener('submit', function(e){
     e.preventDefault();
     var name = f.querySelector('#name'), email = f.querySelector('#email');
     if (!name.value.trim()){ name.focus(); return; }
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.value)){ email.focus(); return; }
+
+    var n = count();
+    var link = linkFor(n);
+
+    if (link){
+      /* Hand over to Stripe. The email is offered as a convenience; if the
+         link does not accept it, Stripe simply asks for it on its own page. */
+      var url = link + (link.indexOf('?') === -1 ? '?' : '&') +
+                'prefilled_email=' + encodeURIComponent(email.value.trim());
+      if (btn){ btn.disabled = true; btn.textContent = 'Taking you to payment'; }
+      window.location.href = url;
+      return;
+    }
+
+    /* No link set, so nothing can be charged. Show the confirmation. */
     f.classList.add('gone');
-    var n = parseInt((f.querySelector('#loaves') || {}).value, 10) || 1;
     var line = document.getElementById('successLine');
     if (line){
       line.textContent = 'Reserved, ' + n + (n === 1 ? ' loaf' : ' loaves') +
@@ -1345,19 +1414,6 @@ if (io){
     ok.classList.add('on');
     ok.focus && ok.focus();
   });
-
-  /* the running total, so the price is never a surprise at the end */
-  var sel = f.querySelector('#loaves');
-  var qty = document.getElementById('totalQty');
-  var fig = document.getElementById('totalFig');
-  function total(){
-    if (!sel || !qty || !fig) return;
-    var n = parseInt(sel.value, 10) || 1;
-    qty.textContent = n === 1 ? '1 loaf' : n + ' loaves';
-    fig.textContent = '\u00A3' + (n * 6.5).toFixed(2);
-  }
-  if (sel) sel.addEventListener('change', total);
-  total();
 })();
 
 })();
