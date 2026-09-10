@@ -353,9 +353,9 @@ h3{font-size:clamp(1.15rem,1.7vw,1.42rem);font-weight:600}
   font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-secondary)}
 
 /* ---- 7. The form ---- */
-#claim{background:var(--text-primary);color:#F3EADA;scroll-margin-top:0}
-#claim h2{color:#FBF6EC}
-#claim .lede{color:rgba(243,234,218,.72)}
+#reserve{background:var(--text-primary);color:#F3EADA;scroll-margin-top:0}
+#reserve h2{color:#FBF6EC}
+#reserve .lede{color:rgba(243,234,218,.72)}
 .form{margin-top:2.8rem;max-width:52ch;display:grid;gap:1.5rem}
 .field{display:grid;gap:.55rem}
 .field label{font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;
@@ -369,6 +369,12 @@ h3{font-size:clamp(1.15rem,1.7vw,1.42rem);font-weight:600}
 .field select{appearance:none;cursor:pointer}
 .form .btn{justify-self:start;margin-top:.4rem}
 .form .note{font-size:.86rem;color:rgba(243,234,218,.55);max-width:46ch}
+.total{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;
+  padding:1.15rem 0 .3rem;border-top:1px solid rgba(243,234,218,.22);margin-top:.4rem}
+.total-line{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(243,234,218,.72)}
+.total-fig{font-family:var(--display);font-weight:700;font-size:clamp(1.5rem,3vw,1.9rem);
+  color:var(--accent-hover)}
 .success{display:none;background:rgba(148,80,42,.16);border:1px solid var(--accent-hover);
   padding:1.5rem 1.4rem;border-radius:3px;max-width:52ch;margin-top:2.8rem}
 .success.on{display:block;animation:pop .7s var(--ease)}
@@ -461,13 +467,13 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
       </div>
       <div class="band band-d live" data-a="0.76" data-b="1" data-ramp="0.036">
         <p class="kicker">Batch no. 41</p>
-        <h1 data-split="word">THE SOURDOUGH HOUSE</h1>
+        <h1 data-split="word">Organic. The way it should be</h1>
         <svg class="score-rule" viewBox="0 0 300 22" aria-hidden="true" preserveAspectRatio="none">
           <path d="M4 16 C60 4, 118 3, 168 8 S262 18, 296 7"/>
         </svg>
         <p class="sub">One loaf. Baked Saturday night. Yours Sunday morning.</p>
         <div class="cta-row">
-          <a class="btn" href="#claim">Claim this week's loaf</a>
+          <a class="btn" href="#reserve">Reserve this week's loaf</a>
         </div>
       </div>
     </div>
@@ -479,9 +485,9 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
   <div class="shot" id="staticShot" aria-hidden="true"></div>
   <div class="scrim" aria-hidden="true"></div>
   <div class="inner">
-    <h1>Flour. Water. Salt. And thirty-six hours.</h1>
+    <h1>Organic. The way it should be</h1>
     <p class="sub">One loaf. Baked Saturday night. Yours Sunday morning.</p>
-    <div class="cta-row"><a class="btn" href="#claim">Claim this week's loaf</a></div>
+    <div class="cta-row"><a class="btn" href="#reserve">Reserve this week's loaf</a></div>
   </div>
 </section>
 
@@ -498,7 +504,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
     <a href="#cost">What it costs</a>
     <a href="#faq">Questions</a>
   </div>
-  <a class="btn" href="#claim">Claim a loaf</a>
+  <a class="btn" href="#reserve">Reserve a loaf</a>
 </nav>
 
 <main id="main" tabindex="-1">
@@ -702,13 +708,13 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
   </section>
 
   <!-- ============ 7. THE FORM ============ -->
-  <section class="slab" id="claim">
+  <section class="slab" id="reserve">
     <p class="kick">This week's bake</p>
-    <h2>Claim this week's loaf.</h2>
-    <p class="lede">The bake is small on purpose. Put your name down and we will email you Friday
-      night when the dough goes in.</p>
+    <h2>Reserve this week's loaf.</h2>
+    <p class="lede">Saturday night's bake is small on purpose. Reserve yours and collect it
+      Sunday morning, still warm.</p>
 
-    <form class="form" id="claimForm" novalidate>
+    <form class="form" id="reserveForm" novalidate>
       <div class="field">
         <label for="name">Your name</label>
         <input id="name" name="name" type="text" autocomplete="name" required>
@@ -720,16 +726,25 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
       <div class="field">
         <label for="loaves">How many loaves</label>
         <select id="loaves" name="loaves">
-          <option>One</option><option>Two</option><option>Three</option>
+          <option value="1">One</option>
+          <option value="2">Two</option>
+          <option value="3">Three</option>
         </select>
       </div>
-      <button class="btn" type="submit">Claim this week's loaf</button>
-      <p class="note">This is a demonstration site for an invented bakery, so nothing is sent
+
+      <div class="total" aria-live="polite">
+        <span class="total-line"><span id="totalQty">1 loaf</span> at &pound;6.50 each</span>
+        <span class="total-fig" id="totalFig">&pound;6.50</span>
+      </div>
+
+      <button class="btn" type="submit">Reserve this week's loaf</button>
+      <p class="note">Nothing is taken now. You pay at the counter when you collect on Sunday.</p>
+      <p class="note">This is a demonstration site for an invented bakery, so no order is sent
         anywhere and no loaf will arrive.</p>
     </form>
 
     <div class="success" id="success" role="status" aria-live="polite">
-      <p>You're on the list for Sunday. We'll email you Friday night.</p>
+      <p id="successLine">Reserved. We'll email you Friday night when the dough goes in.</p>
     </div>
   </section>
 
@@ -1312,7 +1327,7 @@ if (io){
 
 /* ---------- the form: a JS-only success state, honestly labelled ---------- */
 (function form(){
-  var f = document.getElementById('claimForm');
+  var f = document.getElementById('reserveForm');
   var ok = document.getElementById('success');
   if (!f || !ok) return;
   f.addEventListener('submit', function(e){
@@ -1321,9 +1336,28 @@ if (io){
     if (!name.value.trim()){ name.focus(); return; }
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.value)){ email.focus(); return; }
     f.classList.add('gone');
+    var n = parseInt((f.querySelector('#loaves') || {}).value, 10) || 1;
+    var line = document.getElementById('successLine');
+    if (line){
+      line.textContent = 'Reserved, ' + n + (n === 1 ? ' loaf' : ' loaves') +
+        " for Sunday. We'll email you Friday night when the dough goes in.";
+    }
     ok.classList.add('on');
     ok.focus && ok.focus();
   });
+
+  /* the running total, so the price is never a surprise at the end */
+  var sel = f.querySelector('#loaves');
+  var qty = document.getElementById('totalQty');
+  var fig = document.getElementById('totalFig');
+  function total(){
+    if (!sel || !qty || !fig) return;
+    var n = parseInt(sel.value, 10) || 1;
+    qty.textContent = n === 1 ? '1 loaf' : n + ' loaves';
+    fig.textContent = '\u00A3' + (n * 6.5).toFixed(2);
+  }
+  if (sel) sel.addEventListener('change', total);
+  total();
 })();
 
 })();
