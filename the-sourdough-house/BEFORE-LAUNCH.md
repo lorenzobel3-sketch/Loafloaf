@@ -43,7 +43,8 @@ below has to be true before it is public. Nothing here is optional.
         still invented
       - "organic stoneground flour from a mill two counties over", which
         matters twice over because the headline says organic
-      - the thirty-six hour ferment, which the whole page is built on
+      - "never part baked, never frozen, never brought back to life in a
+        warmer", which is now one of the three freshness claims
       - baked overnight before each delivery morning, delivered Saturday
         or Sunday
       - two bakes a weekend, and whether that is really your routine
