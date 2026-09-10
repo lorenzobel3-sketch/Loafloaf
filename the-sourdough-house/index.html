@@ -1367,7 +1367,12 @@ if (io){
   var hrs  = document.getElementById('crumbLabel');
   if (!btn || !wrap) return;
 
-  var p = 0, holding = false, raf = null, last = 0, lastShown = '', lastAt = 0;
+  /* lastAt starts far in the past so the first paint is never swallowed by
+     the throttle below. Starting it at 0 meant that on a fast load, where
+     the script runs less than 100ms in, the opening label was never
+     written, and reduced motion showed "Press and hold" on a crumb that
+     was already fully open. */
+  var p = 0, holding = false, raf = null, last = 0, lastShown = '', lastAt = -1e9;
   var RISE = 2600, FALL = 4200;   /* ms: it opens while held, closes when released */
 
   function paint(now){
