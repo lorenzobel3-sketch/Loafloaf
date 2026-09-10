@@ -81,5 +81,7 @@ below has to be true before it is public. Nothing here is optional.
 ## Returns when you have them
 
 - [ ] **The testimonials section was removed.** It held four quotes that I
-      wrote. Real quotes from real customers, used with their permission,
-      and the section goes straight back in.
+      wrote. On a trading site those are fabricated reviews, which is
+      unlawful in the UAE and most markets. Real quotes from real
+      customers, used with their permission, and the section goes straight
+      back in.
